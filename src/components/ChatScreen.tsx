@@ -38,8 +38,15 @@ const assistantReply = (question: string) => {
   return 'I can help with balances, expenses, transfers, bills, and account activity. What would you like to know?';
 };
 
+const BACKEND_URL =
+  Platform.OS === 'android'
+    ? 'http://10.0.2.2:8000/api/v1/chat/message'
+    : 'http://localhost:8000/api/v1/chat/message';
+
 function ChatScreen({visible, onClose}: ChatScreenProps) {
   const [draft, setDraft] = useState('');
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'welcome',
@@ -48,19 +55,62 @@ function ChatScreen({visible, onClose}: ChatScreenProps) {
     },
   ]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const text = draft.trim();
 
-    if (!text) {
+    if (!text || isLoading) {
       return;
     }
 
+    const userMessageId = `${Date.now()}-user`;
     setMessages(currentMessages => [
       ...currentMessages,
-      {id: `${Date.now()}-user`, text, fromUser: true},
-      {id: `${Date.now()}-assistant`, text: assistantReply(text), fromUser: false},
+      {id: userMessageId, text, fromUser: true},
     ]);
     setDraft('');
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: text,
+          session_id: sessionId,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.session_id) {
+          setSessionId(data.session_id);
+        }
+        setMessages(current => [
+          ...current,
+          {
+            id: `${Date.now()}-assistant`,
+            text: data.reply || assistantReply(text),
+            fromUser: false,
+          },
+        ]);
+      } else {
+        // Fallback to local logic if backend returns error
+        setMessages(current => [
+          ...current,
+          {id: `${Date.now()}-assistant`, text: assistantReply(text), fromUser: false},
+        ]);
+      }
+    } catch {
+      // Offline fallback
+      setMessages(current => [
+        ...current,
+        {id: `${Date.now()}-assistant`, text: assistantReply(text), fromUser: false},
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -119,6 +169,11 @@ function ChatScreen({visible, onClose}: ChatScreenProps) {
                 </Text>
               </View>
             ))}
+            {isLoading && (
+              <View style={[styles.messageBubble, styles.assistantBubble]}>
+                <Text style={styles.messageText}>Analyzing banking data...</Text>
+              </View>
+            )}
           </ScrollView>
 
           <View style={styles.inputRow}>
