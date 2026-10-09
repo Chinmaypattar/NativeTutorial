@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -21,7 +22,7 @@ class Settings(BaseSettings):
 
     # Google Gemini Configuration (Primary / Default)
     GEMINI_API_KEY: Optional[str] = None
-    GEMINI_MODEL: str = "gemini-2.0-flash"
+    GEMINI_MODEL: str = "gemini-3.8-flash"
     GEMINI_BASE_URL: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
     # OpenAI Configuration (Secondary alternative)
@@ -38,7 +39,10 @@ class Settings(BaseSettings):
     DEFAULT_CUSTOMER_ID: int = 1
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=[
+            str(Path(__file__).resolve().parent.parent.parent / ".env"),
+            ".env",
+        ],
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="allow",

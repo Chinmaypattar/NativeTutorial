@@ -1,6 +1,7 @@
 import json
 from typing import Any, Dict, List, Optional
 from app.ai.function_calling import LLMFunctionCallingClient
+from app.ai.guardrails import BankingGuardrails
 from app.ai.local_engine import LocalAIEngine
 from app.ai.memory import ConversationMemoryManager
 from app.ai.prompts import BANKING_COPILOT_SYSTEM_PROMPT
@@ -46,6 +47,28 @@ class AIOrchestrator:
             content=user_message,
         )
 
+        # 4. Strict Banking Guardrail Pre-Check
+        is_blocked, guardrail_response = BankingGuardrails.pre_check(user_message)
+        if is_blocked and guardrail_response:
+            await self.audit_repo.log_action(
+                customer_id=customer_id,
+                action="GUARDRAIL_INTERCEPT",
+                parameters={"query": user_message},
+                status="blocked",
+                ip_address=ip_address,
+            )
+            await self.chat_repo.add_message(
+                session_id=current_session_id,
+                role="assistant",
+                content=guardrail_response,
+            )
+            return ChatResponse(
+                session_id=current_session_id,
+                reply=guardrail_response,
+                tools_executed=[],
+                session_context=context,
+            )
+
         tools_executed: List[ToolCallExecutionRecord] = []
         final_reply = ""
 
@@ -71,22 +94,8 @@ class AIOrchestrator:
                 response_msg = await self.llm_client.call_with_tools(llm_messages)
 
                 if response_msg and response_msg.tool_calls:
-                    # Model selected tools
-                    llm_messages.append({
-                        "role": "assistant",
-                        "content": response_msg.content or "",
-                        "tool_calls": [
-                            {
-                                "id": tc.id,
-                                "type": "function",
-                                "function": {
-                                    "name": tc.function.name,
-                                    "arguments": tc.function.arguments,
-                                },
-                            }
-                            for tc in response_msg.tool_calls
-                        ],
-                    })
+                    # Append assistant message with tool calls (preserves Gemini thought_signature)
+                    llm_messages.append(response_msg)
 
                     for tc in response_msg.tool_calls:
                         tool_name = tc.function.name
@@ -130,21 +139,35 @@ class AIOrchestrator:
                         llm_messages.append({
                             "role": "tool",
                             "tool_call_id": tc.id,
-                            "content": json.dumps(tool_result),
+                            "content": json.dumps(tool_result, default=str),
                         })
 
                     # Second LLM call for grounded natural language synthesis
-                    synthesis_resp = await self.llm_client.client.chat.completions.create(
-                        model=self.llm_client.model_name,
-                        messages=llm_messages,
-                        temperature=0.0,
-                    )
-                    final_reply = synthesis_resp.choices[0].message.content or ""
+                    try:
+                        synthesis_resp = await self.llm_client.client.chat.completions.create(
+                            model=self.llm_client.model_name,
+                            messages=llm_messages,
+                            temperature=0.0,
+                        )
+                        final_reply = synthesis_resp.choices[0].message.content or ""
+                    except Exception as synth_err:
+                        logger.warning(f"LLM synthesis call failed: {synth_err}. Using grounded local synthesis.")
+                        final_reply = ""
+
+                    # Fallback synthesis if empty
+                    if not final_reply and tools_executed:
+                        first_tool = tools_executed[0]
+                        final_reply = LocalAIEngine.synthesize_response(
+                            first_tool.tool_name,
+                            first_tool.result,
+                            user_message,
+                            first_tool.arguments,
+                        )
                 else:
                     final_reply = response_msg.content if response_msg and response_msg.content else "I'm here to assist with your banking and financial accounts."
 
             except Exception as e:
-                logger.error(f"Azure/OpenAI LLM execution failed: {e}. Falling back to Local AI Engine.")
+                logger.error(f"Cloud LLM execution failed: {e}. Falling back to Local AI Engine.")
                 final_reply = ""
 
         # Fallback to Local AI Engine if LLM not available or failed
@@ -183,14 +206,15 @@ class AIOrchestrator:
                     user_message, tool_args, context
                 )
 
-                final_reply = LocalAIEngine.synthesize_response(intent_tool, tool_result, user_message)
+                final_reply = LocalAIEngine.synthesize_response(intent_tool, tool_result, user_message, tool_args)
             else:
                 final_reply = (
                     "I can help you review your balances, search transactions (e.g. 'How much did I spend on Flipkart?'), "
                     "check your credit cards, assess loan EMIs, evaluate affordability for big purchases, or analyze your financial health score. What would you like to explore?"
                 )
 
-        # 5. Persist assistant reply in conversation history
+        # 5. Sanitize reply (PII / security mask) and persist in conversation history
+        final_reply = BankingGuardrails.post_sanitize(final_reply)
         await self.chat_repo.add_message(
             session_id=current_session_id,
             role="assistant",

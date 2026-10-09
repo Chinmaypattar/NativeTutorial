@@ -84,3 +84,10 @@ __pycache__/
 *.sqlite3
 .pytest_cache/
 
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
+!backend/.env.example
