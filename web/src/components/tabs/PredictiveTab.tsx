@@ -2,20 +2,16 @@ import React, { useState } from 'react';
 import {
   LineChart,
   Calculator,
-  ShieldCheck,
   AlertTriangle,
   CheckCircle2,
-  TrendingDown,
   Sparkles,
-  ArrowRight,
-  Info,
 } from 'lucide-react';
-import { AffordabilityResult, CashflowForecast } from '../../types/banking';
+import { AffordabilityResult, CashflowForecastResponse } from '../../types/banking';
 import { formatCurrency } from '../../utils/formatters';
 import { api } from '../../api/client';
 
 interface PredictiveTabProps {
-  initialForecast: CashflowForecast | null;
+  initialForecast: CashflowForecastResponse | null;
   onAskCopilot: (query: string) => void;
 }
 
@@ -28,12 +24,11 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
   const [itemPrice, setItemPrice] = useState('800000');
   const [downPayment, setDownPayment] = useState('200000');
   const [tenure, setTenure] = useState('60');
-  const [interestRate, setInterestRate] = useState('8.5');
   const [loadingAffordability, setLoadingAffordability] = useState(false);
   const [affordabilityResult, setAffordabilityResult] = useState<AffordabilityResult | null>(null);
 
   // Cashflow state
-  const [forecast, setForecast] = useState<CashflowForecast | null>(initialForecast);
+  const [forecast, setForecast] = useState<CashflowForecastResponse | null>(initialForecast);
   const [forecastDays, setForecastDays] = useState(30);
   const [loadingForecast, setLoadingForecast] = useState(false);
 
@@ -43,10 +38,9 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
     try {
       const res = await api.checkAffordability({
         item_name: itemName,
-        item_price: parseFloat(itemPrice),
-        down_payment: downPayment ? parseFloat(downPayment) : undefined,
-        loan_tenure_months: tenure ? parseInt(tenure) : undefined,
-        estimated_interest_rate: interestRate ? parseFloat(interestRate) : undefined,
+        total_cost: parseFloat(itemPrice),
+        down_payment: downPayment ? parseFloat(downPayment) : 0,
+        loan_tenure_months: tenure ? parseInt(tenure, 10) : 60,
       });
       setAffordabilityResult(res);
     } catch (err: any) {
@@ -184,27 +178,6 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              Interest Rate (% p.a.)
-            </label>
-            <input
-              type="number"
-              step="0.1"
-              value={interestRate}
-              onChange={(e) => setInterestRate(e.target.value)}
-              style={{
-                width: '100%',
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '8px',
-                padding: '10px 12px',
-                color: '#fff',
-                fontSize: '0.875rem',
-              }}
-            />
-          </div>
-
-          <div>
             <button
               type="submit"
               className="btn-primary"
@@ -230,48 +203,61 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
                 <span className={`badge ${
                   affordabilityResult.verdict === 'AFFORDABLE'
                     ? 'badge-success'
-                    : affordabilityResult.verdict === 'STRETCH'
+                    : affordabilityResult.verdict === 'CAUTION_STRETCH' || affordabilityResult.verdict === 'STRETCH'
                     ? 'badge-warning'
                     : 'badge-danger'
                 }`} style={{ fontSize: '0.85rem', padding: '6px 14px' }}>
-                  {affordabilityResult.verdict === 'AFFORDABLE' && <CheckCircle2 size={16} />}
-                  {affordabilityResult.verdict === 'STRETCH' && <AlertTriangle size={16} />}
-                  {affordabilityResult.verdict}
+                  {affordabilityResult.is_affordable ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
+                  {affordabilityResult.verdict.replace('_', ' ')}
                 </span>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff', marginTop: '10px' }}>
-                  {affordabilityResult.verdict_description}
+                  {affordabilityResult.is_affordable
+                    ? 'Capital Outlay is Financially Viable'
+                    : 'High Financial Stress or Infeasible Risk Detected'}
                 </h3>
               </div>
 
               <div style={{ display: 'flex', gap: '24px' }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Estimated Monthly EMI</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Estimated Monthly Impact</div>
                   <div className="mono" style={{ fontSize: '1.3rem', fontWeight: 800, color: '#38bdf8' }}>
-                    {formatCurrency(affordabilityResult.estimated_monthly_emi)}
+                    {formatCurrency(affordabilityResult.monthly_impact)}
                   </div>
                 </div>
                 <div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Emergency Runway</div>
                   <div className="mono" style={{ fontSize: '1.3rem', fontWeight: 800, color: '#10b981' }}>
-                    {affordabilityResult.emergency_fund_runway_months.toFixed(1)} Months
+                    {affordabilityResult.emergency_fund_buffer_months.toFixed(1)} Months
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Projected DTI</div>
+                  <div className="mono" style={{ fontSize: '1.3rem', fontWeight: 800, color: affordabilityResult.projected_debt_to_income > 45 ? '#f87171' : '#38bdf8' }}>
+                    {affordabilityResult.projected_debt_to_income.toFixed(1)}%
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Reasoning points */}
+            {/* Analysis Details */}
             <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)' }}>
               <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase' }}>
                 AI Financial Rationale:
               </div>
               <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {affordabilityResult.reasoning.map((r, i) => (
+                {affordabilityResult.analysis_details.map((r, i) => (
                   <li key={i} style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38bdf8' }} />
                     <span>{r}</span>
                   </li>
                 ))}
               </ul>
+
+              {affordabilityResult.suggested_alternative && (
+                <div style={{ marginTop: '12px', padding: '10px 14px', background: 'rgba(56, 189, 248, 0.1)', borderRadius: '6px', border: '1px solid rgba(56, 189, 248, 0.2)', fontSize: '0.82rem', color: '#7dd3fc' }}>
+                  <strong>Alternative Recommendation:</strong> {affordabilityResult.suggested_alternative}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -284,7 +270,7 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <LineChart size={22} color="#10b981" />
               <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#fff' }}>
-                30-Day Predictive Cashflow Forecast
+                {forecastDays}-Day Predictive Cashflow Forecast
               </h2>
             </div>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
@@ -297,6 +283,7 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
               <button
                 key={d}
                 onClick={() => handleRefreshForecast(d)}
+                disabled={loadingForecast}
                 style={{
                   padding: '6px 14px',
                   borderRadius: 'var(--radius-sm)',
@@ -317,37 +304,37 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
         {/* Summary metrics */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
           <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Starting Balance</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Starting Liquid Balance</div>
             <div className="mono" style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
-              {formatCurrency(forecast?.starting_balance || 245680.5)}
+              {formatCurrency(forecast?.current_liquid_balance || 0)}
             </div>
           </div>
 
-          <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ padding: '14px', background: 'rgba(255,255,200,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Lowest Projected Balance</div>
             <div className="mono" style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f59e0b' }}>
-              {formatCurrency(forecast?.lowest_predicted_balance || 211180.5)}
+              {formatCurrency(forecast?.lowest_projected_balance || 0)}
             </div>
           </div>
 
           <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Ending Balance (Day {forecastDays})</div>
+            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Projected Ending Balance</div>
             <div className="mono" style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981' }}>
-              {formatCurrency(forecast?.ending_balance || 325680.5)}
+              {formatCurrency(forecast?.projected_end_balance || 0)}
             </div>
           </div>
 
           <div style={{ padding: '14px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
             <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Liquidity Risk Verdict</div>
-            <span className="badge badge-success" style={{ marginTop: '4px' }}>
-              {forecast?.risk_level || 'SAFE'} (No Deficit Expected)
+            <span className={`badge ${forecast?.run_out_of_money_risk ? 'badge-danger' : 'badge-success'}`} style={{ marginTop: '4px' }}>
+              {forecast?.risk_level ? `${forecast.risk_level.toUpperCase()} RISK` : 'LOW RISK'}
             </span>
           </div>
         </div>
 
         {/* Projection Ledger Highlights */}
         <div style={{
-          maxHeight: '260px',
+          maxHeight: '280px',
           overflowY: 'auto',
           border: '1px solid var(--border-subtle)',
           borderRadius: 'var(--radius-md)',
@@ -356,35 +343,43 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border-subtle)' }}>
-                <th style={{ padding: '10px 16px', color: 'var(--text-muted)' }}>Date</th>
-                <th style={{ padding: '10px 16px', color: 'var(--text-muted)' }}>Event / Obligation</th>
+                <th style={{ padding: '10px 16px', color: 'var(--text-muted)', textAlign: 'left' }}>Date</th>
+                <th style={{ padding: '10px 16px', color: 'var(--text-muted)', textAlign: 'left' }}>Event / Obligation</th>
                 <th style={{ padding: '10px 16px', color: 'var(--text-muted)', textAlign: 'right' }}>Projected Inflow</th>
                 <th style={{ padding: '10px 16px', color: 'var(--text-muted)', textAlign: 'right' }}>Projected Outflow</th>
                 <th style={{ padding: '10px 16px', color: 'var(--text-muted)', textAlign: 'right' }}>Ending Day Balance</th>
               </tr>
             </thead>
             <tbody>
-              {forecast?.projection.map((day, idx) => (
-                <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td style={{ padding: '10px 16px', color: '#fff' }}>{day.date}</td>
-                  <td style={{ padding: '10px 16px' }}>
-                    {day.event_note ? (
-                      <span className="badge badge-info">{day.event_note}</span>
-                    ) : (
-                      <span style={{ color: 'var(--text-muted)' }}>Normal Operations</span>
-                    )}
-                  </td>
-                  <td style={{ padding: '10px 16px', textAlign: 'right', color: '#10b981' }} className="mono">
-                    {day.predicted_income > 0 ? `+${formatCurrency(day.predicted_income)}` : '—'}
-                  </td>
-                  <td style={{ padding: '10px 16px', textAlign: 'right', color: '#f87171' }} className="mono">
-                    {day.predicted_expense > 0 ? `-${formatCurrency(day.predicted_expense)}` : '—'}
-                  </td>
-                  <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#fff' }} className="mono">
-                    {formatCurrency(day.predicted_balance)}
+              {forecast?.timeline && forecast.timeline.length > 0 ? (
+                forecast.timeline.map((day, idx) => (
+                  <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                    <td style={{ padding: '10px 16px', color: '#fff' }}>{String(day.date)}</td>
+                    <td style={{ padding: '10px 16px' }}>
+                      {day.event_description ? (
+                        <span className="badge badge-info">{day.event_description}</span>
+                      ) : (
+                        <span style={{ color: 'var(--text-muted)' }}>Normal Operations</span>
+                      )}
+                    </td>
+                    <td style={{ padding: '10px 16px', textAlign: 'right', color: '#10b981' }} className="mono">
+                      {day.inflows > 0 ? `+${formatCurrency(day.inflows)}` : '—'}
+                    </td>
+                    <td style={{ padding: '10px 16px', textAlign: 'right', color: '#f87171' }} className="mono">
+                      {day.outflows > 0 ? `-${formatCurrency(day.outflows)}` : '—'}
+                    </td>
+                    <td style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: '#fff' }} className="mono">
+                      {formatCurrency(day.projected_balance)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: 'center', padding: '24px', color: 'var(--text-muted)' }}>
+                    No forecast data available. Click on one of the timeframe buttons above to generate a projection.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

@@ -223,10 +223,10 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
             <div key={offer.id} className="bank-card" style={{ background: 'linear-gradient(135deg, #1b263b, #0f172a)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <span className="badge badge-success">
-                  {offer.status.replace('_', ' ')}
+                  {offer.eligibility_status || 'Pre-Approved'}
                 </span>
                 <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>
-                  {offer.apr_or_return}
+                  {offer.interest_rate_or_rewards}
                 </span>
               </div>
 
@@ -237,21 +237,31 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
                 {offer.description}
               </p>
 
-              <div style={{
-                marginTop: '16px',
-                padding: '10px 12px',
-                background: 'rgba(16, 185, 129, 0.08)',
-                border: '1px solid rgba(16, 185, 129, 0.2)',
-                borderRadius: '8px',
-                fontSize: '0.78rem',
-                color: '#10b981',
-                fontWeight: 600,
-              }}>
-                ✨ {offer.benefit_highlight}
-              </div>
+              {offer.benefits && offer.benefits.length > 0 && (
+                <div style={{
+                  marginTop: '16px',
+                  padding: '10px 12px',
+                  background: 'rgba(16, 185, 129, 0.08)',
+                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  borderRadius: '8px',
+                  fontSize: '0.78rem',
+                  color: '#10b981',
+                  fontWeight: 600,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px',
+                }}>
+                  {offer.benefits.slice(0, 2).map((b, bIdx) => (
+                    <div key={bIdx} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>✨</span>
+                      <span>{b}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               <button
-                onClick={() => alert(`Offer "${offer.title}" applied! Our team will notify you.`)}
+                onClick={() => alert(`Offer "${offer.title}" applied! Our banking team will notify you.`)}
                 className="btn-primary"
                 style={{ width: '100%', justifyContent: 'center', marginTop: '16px', fontSize: '0.8rem' }}
               >

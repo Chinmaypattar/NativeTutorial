@@ -17,9 +17,12 @@ async def check_affordability(
 
 
 @router.get("/forecast", response_model=CashflowForecastResponse)
+@router.get("/cashflow-forecast", response_model=CashflowForecastResponse)
 async def get_forecast(
-    days: int = Query(30, ge=7, le=90),
+    days: int = Query(None, ge=7, le=90),
+    days_ahead: int = Query(None, ge=7, le=90),
     customer_id: int = Depends(get_current_customer_id),
     forecaster: CashflowForecaster = Depends(get_cashflow_forecaster),
 ):
-    return await forecaster.forecast_cashflow(customer_id, days)
+    selected_days = days_ahead or days or 30
+    return await forecaster.forecast_cashflow(customer_id, selected_days)

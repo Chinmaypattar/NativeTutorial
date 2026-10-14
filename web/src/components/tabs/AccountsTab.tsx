@@ -3,11 +3,9 @@ import {
   Wallet,
   ArrowRightLeft,
   FileText,
-  Share2,
   Copy,
   Check,
   Shield,
-  PlusCircle,
   Building2,
 } from 'lucide-react';
 import { AccountsSummary, Account } from '../../types/banking';
@@ -16,9 +14,16 @@ import { formatCurrency, maskAccountNumber } from '../../utils/formatters';
 interface AccountsTabProps {
   accounts: AccountsSummary | null;
   onAskCopilot: (query: string) => void;
+  onOpenTransfer: () => void;
+  onOpenStatement: (account: Account) => void;
 }
 
-export const AccountsTab: React.FC<AccountsTabProps> = ({ accounts, onAskCopilot }) => {
+export const AccountsTab: React.FC<AccountsTabProps> = ({
+  accounts,
+  onAskCopilot,
+  onOpenTransfer,
+  onOpenStatement,
+}) => {
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
   const handleCopy = (acc: Account) => {
@@ -38,18 +43,25 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({ accounts, onAskCopilot
           </p>
         </div>
 
-        <button
-          onClick={() => onAskCopilot('What is my total account balance?')}
-          className="btn-primary"
-        >
-          <span>Audit Balances via Copilot</span>
-        </button>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button onClick={onOpenTransfer} className="btn-secondary" style={{ fontSize: '0.82rem' }}>
+            <ArrowRightLeft size={14} color="#38bdf8" />
+            <span>Transfer Funds</span>
+          </button>
+          <button
+            onClick={() => onAskCopilot('What is my total account balance?')}
+            className="btn-primary"
+            style={{ fontSize: '0.82rem' }}
+          >
+            <span>Audit Balances via Copilot</span>
+          </button>
+        </div>
       </div>
 
       {/* Grid of Accounts */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
         {accounts?.accounts.map((acc) => {
-          const isSavings = acc.account_type === 'savings';
+          const isSavings = acc.account_type.toLowerCase().includes('savings');
           return (
             <div
               key={acc.id}
@@ -141,15 +153,15 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({ accounts, onAskCopilot
               {/* Action Buttons */}
               <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <button
-                  onClick={() => alert(`Simulated fund transfer for ${acc.account_type} account initiated.`)}
+                  onClick={onOpenTransfer}
                   className="btn-secondary"
                   style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
                 >
                   <ArrowRightLeft size={14} />
-                  <span>Transfer</span>
+                  <span>Transfer Funds</span>
                 </button>
                 <button
-                  onClick={() => alert(`Account statement for ${acc.account_type} generated.`)}
+                  onClick={() => onOpenStatement(acc)}
                   className="btn-secondary"
                   style={{ flex: 1, justifyContent: 'center', fontSize: '0.8rem' }}
                 >

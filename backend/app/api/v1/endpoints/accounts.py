@@ -8,6 +8,7 @@ router = APIRouter()
 
 
 @router.get("", response_model=List[AccountResponse])
+@router.get("/", response_model=List[AccountResponse])
 async def list_accounts(
     account_type: Optional[str] = None,
     customer_id: int = Depends(get_current_customer_id),

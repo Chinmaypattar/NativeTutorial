@@ -1,5 +1,7 @@
 export interface Customer {
   id: number;
+  first_name: string;
+  last_name: string;
   full_name: string;
   email: string;
   phone: string;
@@ -21,6 +23,8 @@ export interface Account {
 export interface AccountsSummary {
   customer_id: number;
   total_balance: number;
+  savings_balance?: number;
+  checking_balance?: number;
   accounts: Account[];
 }
 
@@ -32,17 +36,10 @@ export interface Transaction {
   transaction_type: 'debit' | 'credit' | 'transfer';
   category: string;
   merchant?: string;
+  merchant_name?: string;
   beneficiary?: string;
   description: string;
   timestamp: string;
-}
-
-export interface MerchantSpend {
-  merchant: string;
-  total_spend: number;
-  transaction_count: number;
-  average_ticket_size: number;
-  transactions?: Transaction[];
 }
 
 export interface CreditCard {
@@ -96,7 +93,7 @@ export interface FinancialWellnessPillar {
   name: string;
   score: number;
   max_score: number;
-  status: 'excellent' | 'good' | 'moderate' | 'needs_attention';
+  status?: string;
   detail: string;
 }
 
@@ -114,46 +111,53 @@ export interface FinancialWellnessScore {
 
 export interface PersonalizedOffer {
   id: string;
+  product_type: string;
   title: string;
-  category: 'credit_card' | 'loan' | 'investment';
   description: string;
-  benefit_highlight: string;
-  apr_or_return?: string;
-  status: 'pre_approved' | 'recommended';
+  benefits: string[];
+  interest_rate_or_rewards: string;
+  eligibility_status: string;
+}
+
+export interface OfferRecommendationResponse {
+  customer_id: number;
+  customer_credit_score: number;
+  recommendations: PersonalizedOffer[];
 }
 
 export interface AffordabilityResult {
   item_name: string;
-  item_price: number;
-  down_payment: number;
-  loan_amount: number;
-  estimated_monthly_emi: number;
-  verdict: 'AFFORDABLE' | 'STRETCH' | 'UNAFFORDABLE';
-  verdict_description: string;
-  current_savings: number;
-  post_purchase_savings: number;
-  emergency_fund_runway_months: number;
-  post_purchase_dti_ratio: number;
-  reasoning: string[];
+  total_cost: number;
+  is_affordable: boolean;
+  verdict: string;
+  monthly_impact: number;
+  current_debt_to_income: number;
+  projected_debt_to_income: number;
+  emergency_fund_buffer_months: number;
+  analysis_details: string[];
+  suggested_alternative?: string;
 }
 
-export interface CashflowForecastDay {
-  day_offset: number;
+export interface DailyCashflowPoint {
   date: string;
-  predicted_balance: number;
-  predicted_income: number;
-  predicted_expense: number;
-  event_note?: string;
+  projected_balance: number;
+  inflows: number;
+  outflows: number;
+  event_description?: string;
 }
 
-export interface CashflowForecast {
+export interface CashflowForecastResponse {
   customer_id: number;
-  starting_balance: number;
-  ending_balance: number;
-  lowest_predicted_balance: number;
-  days_projected: number;
-  risk_level: 'SAFE' | 'MODERATE' | 'CRITICAL';
-  projection: CashflowForecastDay[];
+  forecast_days: number;
+  current_liquid_balance: number;
+  projected_end_balance: number;
+  lowest_projected_balance: number;
+  lowest_balance_date: string;
+  run_out_of_money_risk: boolean;
+  risk_level: string;
+  predicted_shortfall: number;
+  insights: string[];
+  timeline: DailyCashflowPoint[];
 }
 
 export interface ToolExecutionRecord {
@@ -175,4 +179,48 @@ export interface ChatResponse {
   reply: string;
   tools_executed: ToolExecutionRecord[];
   session_context: Record<string, any>;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  customer_id: number;
+  customer_name: string;
+  email: string;
+}
+
+export interface TransferPayload {
+  source_account_id: number;
+  beneficiary_name: string;
+  beneficiary_account: string;
+  amount: number;
+  remarks?: string;
+}
+
+export interface TransferResponse {
+  reference_id: string;
+  status: string;
+  amount: number;
+  source_account_id: number;
+  beneficiary_name: string;
+  remaining_balance: number;
+  timestamp: string;
+}
+
+export interface BillPayPayload {
+  account_id: number;
+  biller_name: string;
+  bill_category: string;
+  consumer_number: string;
+  amount: number;
+}
+
+export interface BillPayResponse {
+  reference_id: string;
+  status: string;
+  amount: number;
+  biller_name: string;
+  consumer_number: string;
+  remaining_balance: number;
+  timestamp: string;
 }

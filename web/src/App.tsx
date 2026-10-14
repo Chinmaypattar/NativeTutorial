@@ -11,9 +11,16 @@ import { PredictiveTab } from './components/tabs/PredictiveTab';
 import { WellnessTab } from './components/tabs/WellnessTab';
 import { CopilotChat } from './components/CopilotChat';
 
+// Banking Operations Modals
+import { AuthModal } from './components/modals/AuthModal';
+import { TransferModal } from './components/modals/TransferModal';
+import { BillPayModal } from './components/modals/BillPayModal';
+import { StatementModal } from './components/modals/StatementModal';
+
 import {
   Customer,
   AccountsSummary,
+  Account,
   Transaction,
   CreditCard,
   Loan,
@@ -21,7 +28,7 @@ import {
   SavingsBucket,
   FinancialWellnessScore,
   PersonalizedOffer,
-  CashflowForecast,
+  CashflowForecastResponse,
 } from './types/banking';
 import { api } from './api/client';
 import { Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
@@ -44,7 +51,13 @@ export const App: React.FC = () => {
   const [buckets, setBuckets] = useState<SavingsBucket[]>([]);
   const [wellness, setWellness] = useState<FinancialWellnessScore | null>(null);
   const [offers, setOffers] = useState<PersonalizedOffer[]>([]);
-  const [forecast, setForecast] = useState<CashflowForecast | null>(null);
+  const [forecast, setForecast] = useState<CashflowForecastResponse | null>(null);
+
+  // Modal Dialog States
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isTransferOpen, setIsTransferOpen] = useState(false);
+  const [isBillPayOpen, setIsBillPayOpen] = useState(false);
+  const [statementAccount, setStatementAccount] = useState<Account | null>(null);
 
   const loadBankingData = async () => {
     setLoading(true);
@@ -101,6 +114,12 @@ export const App: React.FC = () => {
     setIsCopilotOpen(true);
   };
 
+  const handleLogout = () => {
+    api.logout();
+    setCustomer(null);
+    loadBankingData();
+  };
+
   return (
     <div className="app-container">
       {/* Sidebar Navigation */}
@@ -118,6 +137,10 @@ export const App: React.FC = () => {
           customer={customer}
           onOpenCopilot={() => setIsCopilotOpen(!isCopilotOpen)}
           copilotOpen={isCopilotOpen}
+          onOpenTransfer={() => setIsTransferOpen(true)}
+          onOpenBillPay={() => setIsBillPayOpen(true)}
+          onOpenAuth={() => setIsAuthOpen(true)}
+          onLogout={handleLogout}
         />
 
         {error && (
@@ -188,6 +211,8 @@ export const App: React.FC = () => {
                 <AccountsTab
                   accounts={accounts}
                   onAskCopilot={handleAskCopilot}
+                  onOpenTransfer={() => setIsTransferOpen(true)}
+                  onOpenStatement={(acc) => setStatementAccount(acc)}
                 />
               )}
 
@@ -285,6 +310,39 @@ export const App: React.FC = () => {
           setCopilotQuery(undefined);
         }}
         initialQuery={copilotQuery}
+      />
+
+      {/* Modals for Authentication, Transfer, Bill Pay, and Account Statements */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onSuccess={(cust) => {
+          setCustomer(cust);
+          setIsAuthOpen(false);
+          loadBankingData();
+        }}
+        onClose={() => setIsAuthOpen(false)}
+      />
+
+      <TransferModal
+        isOpen={isTransferOpen}
+        accounts={accounts?.accounts || []}
+        onClose={() => setIsTransferOpen(false)}
+        onSuccess={() => loadBankingData()}
+      />
+
+      <BillPayModal
+        isOpen={isBillPayOpen}
+        accounts={accounts?.accounts || []}
+        onClose={() => setIsBillPayOpen(false)}
+        onSuccess={() => loadBankingData()}
+      />
+
+      <StatementModal
+        isOpen={!!statementAccount}
+        account={statementAccount}
+        customer={customer}
+        transactions={transactions}
+        onClose={() => setStatementAccount(null)}
       />
     </div>
   );

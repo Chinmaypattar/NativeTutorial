@@ -1,34 +1,66 @@
 import {
   AccountsSummary,
   AffordabilityResult,
-  CashflowForecast,
+  AuthResponse,
+  BillPayPayload,
+  BillPayResponse,
+  CashflowForecastResponse,
+  ChatMessage,
   ChatResponse,
   CreditCard,
   Customer,
   FinancialWellnessScore,
   Investment,
   Loan,
+  OfferRecommendationResponse,
   PersonalizedOffer,
   SavingsBucket,
   Transaction,
+  TransferPayload,
+  TransferResponse,
 } from '../types/banking';
 
 const API_BASE = 'http://localhost:8000/api/v1';
 
 class BankingApiClient {
+  private token: string | null = null;
+
+  constructor() {
+    this.token = localStorage.getItem('apex_auth_token');
+  }
+
+  setToken(token: string | null) {
+    this.token = token;
+    if (token) {
+      localStorage.setItem('apex_auth_token', token);
+    } else {
+      localStorage.removeItem('apex_auth_token');
+    }
+  }
+
+  getToken(): string | null {
+    return this.token;
+  }
+
   private async fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options?.headers as Record<string, string>),
+    };
+
+    if (this.token) {
+      headers['Authorization'] = `Bearer ${this.token}`;
+    }
+
     try {
       const response = await fetch(`${API_BASE}${endpoint}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options?.headers,
-        },
         ...options,
+        headers,
       });
 
       if (!response.ok) {
         const errorBody = await response.json().catch(() => ({}));
-        throw new Error(errorBody.message || `API error ${response.status}: ${response.statusText}`);
+        throw new Error(errorBody.detail || errorBody.message || `API error ${response.status}`);
       }
 
       return (await response.json()) as T;
@@ -38,9 +70,42 @@ class BankingApiClient {
     }
   }
 
-  // 1. Customer Profile
+  // 1. Authentication & Identity
+  async login(email: string, password: string = 'password'): Promise<AuthResponse> {
+    const res = await this.fetchJson<AuthResponse>('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    this.setToken(res.access_token);
+    return res;
+  }
+
+  async register(data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    monthly_income?: number;
+  }): Promise<AuthResponse> {
+    const res = await this.fetchJson<AuthResponse>('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+    this.setToken(res.access_token);
+    return res;
+  }
+
+  logout() {
+    this.setToken(null);
+  }
+
+  async getCurrentUser(): Promise<Customer> {
+    return this.fetchJson<Customer>('/auth/me');
+  }
+
   async getCustomerProfile(): Promise<Customer> {
-    return this.fetchJson<Customer>('/customers/me');
+    return this.getCurrentUser();
   }
 
   // 2. Accounts
@@ -48,7 +113,7 @@ class BankingApiClient {
     return this.fetchJson<AccountsSummary>('/accounts/summary');
   }
 
-  // 3. Transactions
+  // 3. Transactions & Transfers
   async getTransactions(params?: {
     merchant?: string;
     category?: string;
@@ -71,10 +136,18 @@ class BankingApiClient {
     return this.fetchJson<Transaction[]>(`/transactions/${qStr ? `?${qStr}` : ''}`);
   }
 
-  async getMerchantSpend(merchant: string, period?: string): Promise<any> {
-    const q = new URLSearchParams({ merchant });
-    if (period) q.append('period', period);
-    return this.fetchJson<any>(`/transactions/merchant-spend?${q.toString()}`);
+  async transferFunds(payload: TransferPayload): Promise<TransferResponse> {
+    return this.fetchJson<TransferResponse>('/transactions/transfer', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  }
+
+  async payBill(payload: BillPayPayload): Promise<BillPayResponse> {
+    return this.fetchJson<BillPayResponse>('/transactions/pay-bill', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   }
 
   // 4. Credit Cards
@@ -82,26 +155,14 @@ class BankingApiClient {
     return this.fetchJson<CreditCard[]>('/credit-cards/');
   }
 
-  async getCreditCardSummary(): Promise<any> {
-    return this.fetchJson<any>('/credit-cards/summary');
-  }
-
   // 5. Loans
   async getLoans(): Promise<Loan[]> {
     return this.fetchJson<Loan[]>('/loans/');
   }
 
-  async getLoanSummary(): Promise<any> {
-    return this.fetchJson<any>('/loans/summary');
-  }
-
   // 6. Investments
   async getInvestments(): Promise<Investment[]> {
     return this.fetchJson<Investment[]>('/investments/');
-  }
-
-  async getInvestmentPortfolio(): Promise<any> {
-    return this.fetchJson<any>('/investments/portfolio');
   }
 
   // 7. Savings Buckets
@@ -128,16 +189,17 @@ class BankingApiClient {
 
   // 9. Personalized Offers
   async getPersonalizedOffers(): Promise<PersonalizedOffer[]> {
-    return this.fetchJson<PersonalizedOffer[]>('/offers/recommendations');
+    const res = await this.fetchJson<OfferRecommendationResponse>('/offers/recommendations');
+    return res.recommendations || [];
   }
 
   // 10. Predictive Analytics
   async checkAffordability(data: {
     item_name: string;
-    item_price: number;
+    total_cost: number;
     down_payment?: number;
     loan_tenure_months?: number;
-    estimated_interest_rate?: number;
+    estimated_monthly_emi?: number;
   }): Promise<AffordabilityResult> {
     return this.fetchJson<AffordabilityResult>('/analytics/affordability', {
       method: 'POST',
@@ -145,8 +207,10 @@ class BankingApiClient {
     });
   }
 
-  async getCashflowForecast(days_ahead: number = 30): Promise<CashflowForecast> {
-    return this.fetchJson<CashflowForecast>(`/analytics/cashflow-forecast?days_ahead=${days_ahead}`);
+  async getCashflowForecast(days_ahead: number = 30): Promise<CashflowForecastResponse> {
+    return this.fetchJson<CashflowForecastResponse>(
+      `/analytics/cashflow-forecast?days_ahead=${days_ahead}`
+    );
   }
 
   // 11. Copilot Chat
