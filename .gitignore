@@ -91,3 +91,8 @@ __pycache__/
 backend/.env
 backend/.env.*
 !backend/.env.example
+
+# Web Build
+dist/
+web/dist/
+.vite/

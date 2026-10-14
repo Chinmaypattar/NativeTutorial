@@ -9,7 +9,9 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "web": "cd web && npm run dev",
+    "web:build": "cd web && npm run build"
   },
   "dependencies": {
     "react": "19.2.3",
