@@ -33,12 +33,29 @@ class AccountService:
         savings = sum(a.balance for a in accounts if "saving" in a.account_type.lower())
         checking = sum(a.balance for a in accounts if "checking" in a.account_type.lower())
 
+        account_responses = [
+            AccountResponse(
+                id=acc.id,
+                customer_id=acc.customer_id,
+                account_number=acc.account_number,
+                masked_account_number=mask_account_number(acc.account_number),
+                account_type=acc.account_type,
+                balance=acc.balance,
+                currency=acc.currency,
+                status=acc.status,
+                created_at=acc.created_at,
+                updated_at=acc.updated_at,
+            )
+            for acc in accounts
+        ]
+
         return AccountSummary(
             total_balance=round(total, 2),
             savings_balance=round(savings, 2),
             checking_balance=round(checking, 2),
             currency=accounts[0].currency if accounts else "INR",
             account_count=len(accounts),
+            accounts=account_responses,
         )
 
     async def get_total_liquid_balance(self, customer_id: int) -> float:

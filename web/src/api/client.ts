@@ -1,4 +1,5 @@
 import {
+  Account,
   AccountsSummary,
   AffordabilityResult,
   AuthResponse,
@@ -110,7 +111,24 @@ class BankingApiClient {
 
   // 2. Accounts
   async getAccountsSummary(): Promise<AccountsSummary> {
-    return this.fetchJson<AccountsSummary>('/accounts/summary');
+    const [summary, accList] = await Promise.all([
+      this.fetchJson<any>('/accounts/summary').catch(() => null),
+      this.fetchJson<Account[]>('/accounts/').catch(() => []),
+    ]);
+
+    const accounts = (summary?.accounts && Array.isArray(summary.accounts) && summary.accounts.length > 0)
+      ? summary.accounts
+      : (Array.isArray(accList) ? accList : []);
+
+    const totalBalance = summary?.total_balance ?? accounts.reduce((sum: number, a: Account) => sum + (a.balance || 0), 0);
+
+    return {
+      customer_id: accounts[0]?.customer_id || 1,
+      total_balance: totalBalance,
+      savings_balance: summary?.savings_balance,
+      checking_balance: summary?.checking_balance,
+      accounts,
+    };
   }
 
   // 3. Transactions & Transfers

@@ -40,8 +40,8 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
   onNavigate,
   onAskCopilot,
 }) => {
-  const primaryCard = cards[0];
-  const recentTransactions = transactions.slice(0, 5);
+  const primaryCard = (cards || [])[0];
+  const recentTransactions = (transactions || []).slice(0, 5);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
@@ -82,7 +82,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
                 <ShieldCheck size={14} /> Active & Insured (DICGC)
               </span>
               <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                Across {accounts?.accounts.length || 2} Connected Accounts
+                Across {accounts?.accounts?.length ?? 0} Connected Accounts
               </span>
             </div>
           </div>
@@ -147,7 +147,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
 
       {/* Account Cards Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
-        {accounts?.accounts.map((acc) => (
+        {(accounts?.accounts || []).map((acc) => (
           <div key={acc.id} className="bank-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -472,7 +472,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {buckets.slice(0, 2).map((b) => {
+              {(buckets || []).slice(0, 2).map((b) => {
                 const percent = Math.min(100, Math.round((b.current_amount / b.target_amount) * 100));
                 return (
                   <div key={b.id} style={{ padding: '10px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>

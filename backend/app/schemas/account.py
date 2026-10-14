@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, ConfigDict
 from app.core.security import mask_account_number
 
@@ -34,3 +34,4 @@ class AccountSummary(BaseModel):
     checking_balance: float
     currency: str = "INR"
     account_count: int
+    accounts: List[AccountResponse] = []
