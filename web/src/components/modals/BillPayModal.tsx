@@ -4,7 +4,6 @@ import {
   Zap,
   Smartphone,
   Wifi,
-  Droplet,
   X,
   CheckCircle2,
   AlertCircle,
@@ -43,19 +42,16 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
   const billersByCategory: Record<string, string[]> = {
     Electricity: ['Adani Electricity', 'Tata Power Mumbai', 'BESCOM Bangalore', 'BSES Rajdhani Delhi'],
     Mobile: ['Jio Prepaid', 'Airtel Postpaid', 'Vodafone Idea (Vi)'],
-    Broadband: ['Airtel Xstream Fiber', 'JioFiber Gigabit', 'ACT Fibernet'],
-    Water: ['Municipal Corporation of Greater Mumbai (MCGM)', 'BWSSB Bangalore'],
-    'Credit Card': ['Apex Platinum Card Statement Bill'],
+    Broadband: ['ACT Fibernet', 'Airtel Xstream Fiber', 'JioFiber', 'Tata Play Fiber'],
+    'Credit Card': ['Apex Millennia Card Bill', 'Apex Platinum Card Bill', 'HDFC Bank Card', 'ICICI Bank Card'],
   };
 
-  const handleCategoryChange = (cat: string) => {
-    setBillCategory(cat);
-    const list = billersByCategory[cat] || ['Other Biller'];
-    setBillerName(list[0]);
-    if (cat === 'Mobile') setConsumerNumber('9876543210');
-    else if (cat === 'Broadband') setConsumerNumber('022-892182');
-    else if (cat === 'Credit Card') setConsumerNumber('4589');
-    else setConsumerNumber('100293847');
+  const handleCategoryChange = (category: string) => {
+    setBillCategory(category);
+    const available = billersByCategory[category] || [];
+    if (available.length > 0) {
+      setBillerName(available[0]);
+    }
   };
 
   const selectedAccount = accounts.find((a) => a.id === sourceAccountId) || accounts[0];
@@ -63,14 +59,15 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    const amt = parseFloat(amount);
-    if (!amt || amt <= 0) {
-      setErrorMessage('Please enter a valid bill amount.');
+
+    const payAmount = parseFloat(amount);
+    if (isNaN(payAmount) || payAmount <= 0) {
+      setErrorMessage('Please enter a valid bill payment amount.');
       return;
     }
 
-    if (selectedAccount && amt > selectedAccount.balance) {
-      setErrorMessage(`Insufficient funds. Account balance is ${formatCurrency(selectedAccount.balance)}.`);
+    if (selectedAccount && payAmount > selectedAccount.balance) {
+      setErrorMessage(`Insufficient funds. Your available balance is ${formatCurrency(selectedAccount.balance)}.`);
       return;
     }
 
@@ -80,14 +77,14 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
         account_id: sourceAccountId,
         biller_name: billerName,
         bill_category: billCategory,
-        consumer_number: consumerNumber,
-        amount: amt,
+        consumer_number: consumerNumber.trim(),
+        amount: payAmount,
       });
 
       setReceipt(res);
       onSuccess();
     } catch (err: any) {
-      setErrorMessage(err.message || 'Bill payment failed. Please try again.');
+      setErrorMessage(err.message || 'Bill payment failed. Please verify consumer details.');
     } finally {
       setSubmitting(false);
     }
@@ -95,63 +92,66 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
 
   const handleClose = () => {
     setReceipt(null);
-    setAmount('2400');
     setErrorMessage('');
     onClose();
   };
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '480px' }}>
+      <div className="modal-content" style={{ maxWidth: '520px', padding: '32px', background: '#ffffff' }}>
+        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              background: 'rgba(245, 158, 11, 0.2)',
+              background: '#fffbeb',
+              border: '1px solid #fde68a',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Receipt size={20} color="#f59e0b" />
+              <Receipt size={18} color="#d97706" />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
-                Utility Bill Payment
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                Bharat BillPay (BBPS)
               </h3>
-              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                Bharat BillPay (BBPS) Direct Settlement
-              </p>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Instant Utility & Card Bill Settlement
+              </div>
             </div>
           </div>
 
           <button
             onClick={handleClose}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            style={{ background: '#f1f5f9', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '4px', cursor: 'pointer', color: 'var(--text-secondary)' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {receipt ? (
-          <div style={{ textAlign: 'center', padding: '12px 0' }}>
+          /* Receipt View */
+          <div style={{ textAlign: 'center', padding: '10px 0' }}>
             <div style={{
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              background: 'rgba(16, 185, 129, 0.15)',
+              background: '#ecfdf5',
+              border: '1px solid #a7f3d0',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: '14px',
             }}>
-              <CheckCircle2 size={32} color="#10b981" />
+              <CheckCircle2 size={32} color="#059669" />
             </div>
-            <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
+            <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
               Bill Payment Settled!
             </h4>
-            <div className="mono" style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981', margin: '8px 0' }}>
+            <div className="mono" style={{ fontSize: '1.8rem', fontWeight: 800, color: '#059669', margin: '8px 0' }}>
               {formatCurrency(receipt.amount)}
             </div>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
@@ -159,7 +159,8 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
             </p>
 
             <div style={{
-              background: 'rgba(0,0,0,0.3)',
+              background: '#f8fafc',
+              border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '14px',
               margin: '20px 0',
@@ -167,19 +168,19 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
               fontSize: '0.78rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '6px',
+              gap: '8px',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Transaction Reference:</span>
-                <span className="mono" style={{ color: '#fff', fontWeight: 600 }}>{receipt.reference_id}</span>
+                <span className="mono" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{receipt.reference_id}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Debited Account:</span>
-                <span style={{ color: '#fff' }}>{selectedAccount?.account_type.toUpperCase()}</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{selectedAccount?.account_type.toUpperCase()}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>New Account Balance:</span>
-                <span className="mono" style={{ color: '#38bdf8', fontWeight: 700 }}>
+                <span className="mono" style={{ color: '#1d4ed8', fontWeight: 700 }}>
                   {formatCurrency(receipt.remaining_balance)}
                 </span>
               </div>
@@ -197,11 +198,11 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
           <form onSubmit={handlePay} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {errorMessage && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                color: '#f87171',
+                color: '#dc2626',
                 fontSize: '0.8rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -232,18 +233,19 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
                       type="button"
                       onClick={() => handleCategoryChange(item.cat)}
                       style={{
-                        padding: '8px 4px',
-                        background: isSel ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255,255,255,0.04)',
-                        border: isSel ? '1px solid #f59e0b' : '1px solid var(--border-subtle)',
+                        padding: '10px 4px',
+                        background: isSel ? '#fffbeb' : '#f8fafc',
+                        border: isSel ? '1px solid #d97706' : '1px solid #e2e8f0',
                         borderRadius: '8px',
-                        color: isSel ? '#f59e0b' : 'var(--text-secondary)',
+                        color: isSel ? '#b45309' : 'var(--text-secondary)',
                         fontSize: '0.72rem',
-                        fontWeight: 600,
+                        fontWeight: 700,
                         cursor: 'pointer',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '4px',
+                        gap: '5px',
+                        transition: 'all 0.15s ease',
                       }}
                     >
                       <Icon size={16} />
@@ -263,70 +265,45 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
                 onChange={(e) => setBillerName(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '9px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
               >
                 {(billersByCategory[billCategory] || []).map((b) => (
-                  <option key={b} value={b} style={{ background: '#0f172a', color: '#fff' }}>
+                  <option key={b} value={b}>
                     {b}
                   </option>
                 ))}
               </select>
             </div>
 
-            <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                Consumer / Account / Card Reference Number
-              </label>
-              <input
-                type="text"
-                value={consumerNumber}
-                onChange={(e) => setConsumerNumber(e.target.value)}
-                style={{
-                  width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '8px',
-                  padding: '9px 12px',
-                  color: '#fff',
-                  fontSize: '0.85rem',
-                  outline: 'none',
-                }}
-                required
-              />
-            </div>
-
             <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  Pay From Account
+                  Consumer No. / Account ID
                 </label>
-                <select
-                  value={sourceAccountId}
-                  onChange={(e) => setSourceAccountId(Number(e.target.value))}
+                <input
+                  type="text"
+                  value={consumerNumber}
+                  onChange={(e) => setConsumerNumber(e.target.value)}
+                  placeholder="e.g. 100293847"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '9px 12px',
-                    color: '#fff',
-                    fontSize: '0.82rem',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
                     outline: 'none',
                   }}
-                >
-                  {accounts.map((acc) => (
-                    <option key={acc.id} value={acc.id} style={{ background: '#0f172a', color: '#fff' }}>
-                      {acc.account_type.toUpperCase()} ({formatCurrency(acc.balance, false)})
-                    </option>
-                  ))}
-                </select>
+                  required
+                />
               </div>
 
               <div>
@@ -337,14 +314,15 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
+                  placeholder="2400"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '9px 12px',
-                    color: '#fff',
-                    fontSize: '0.95rem',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
                     fontWeight: 700,
                     outline: 'none',
                   }}
@@ -353,12 +331,38 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>
+            <div>
+              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                Pay From Account
+              </label>
+              <select
+                value={sourceAccountId}
+                onChange={(e) => setSourceAccountId(Number(e.target.value))}
+                style={{
+                  width: '100%',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
+                  borderRadius: '8px',
+                  padding: '9px 12px',
+                  color: 'var(--text-primary)',
+                  fontSize: '0.85rem',
+                  outline: 'none',
+                }}
+              >
+                {accounts.map((acc) => (
+                  <option key={acc.id} value={acc.id}>
+                    {acc.account_type.toUpperCase()} ({maskAccountNumber(acc.account_number)}) - Balance: {formatCurrency(acc.balance)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
               <button
                 type="button"
                 onClick={handleClose}
                 className="btn-secondary"
-                disabled={submitting}
+                style={{ flex: 1, justifyContent: 'center' }}
               >
                 Cancel
               </button>
@@ -366,8 +370,9 @@ export const BillPayModal: React.FC<BillPayModalProps> = ({
                 type="submit"
                 className="btn-primary"
                 disabled={submitting}
+                style={{ flex: 1.5, justifyContent: 'center' }}
               >
-                <span>{submitting ? 'Processing Payment...' : 'Pay Bill'}</span>
+                {submitting ? 'Settling...' : 'Pay Bill Instantly'}
               </button>
             </div>
           </form>

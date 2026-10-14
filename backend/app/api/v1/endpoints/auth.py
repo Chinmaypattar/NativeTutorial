@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.deps import get_current_customer_id, get_customer_repo
+from app.api.deps import get_authenticated_customer_id, get_current_customer_id, get_customer_repo
 from app.core.security import create_access_token, hash_password, verify_password
 from app.database.models import Account, CreditCard, Customer
 from app.database.session import get_db
@@ -167,7 +167,7 @@ async def login(
 
 @router.get("/me", response_model=CurrentUserResponse)
 async def get_current_user(
-    customer_id: int = Depends(get_current_customer_id),
+    customer_id: int = Depends(get_authenticated_customer_id),
     customer_repo: CustomerRepository = Depends(get_customer_repo),
 ):
     customer = await customer_repo.get_by_id(customer_id)

@@ -43,14 +43,15 @@ export const TransferModal: React.FC<TransferModalProps> = ({
   const handleTransfer = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
-    const amt = parseFloat(amount);
-    if (!amt || amt <= 0) {
+
+    const transferAmount = parseFloat(amount);
+    if (isNaN(transferAmount) || transferAmount <= 0) {
       setErrorMessage('Please enter a valid transfer amount.');
       return;
     }
 
-    if (selectedAccount && amt > selectedAccount.balance) {
-      setErrorMessage(`Insufficient funds. Account balance is ${formatCurrency(selectedAccount.balance)}.`);
+    if (selectedAccount && transferAmount > selectedAccount.balance) {
+      setErrorMessage(`Insufficient funds. Available balance is ${formatCurrency(selectedAccount.balance)}.`);
       return;
     }
 
@@ -58,16 +59,16 @@ export const TransferModal: React.FC<TransferModalProps> = ({
     try {
       const res = await api.transferFunds({
         source_account_id: sourceAccountId,
-        beneficiary_name: beneficiaryName,
-        beneficiary_account: beneficiaryAccount,
-        amount: amt,
-        remarks: remarks || undefined,
+        beneficiary_name: beneficiaryName.trim(),
+        beneficiary_account: beneficiaryAccount.trim(),
+        amount: transferAmount,
+        remarks: remarks.trim() || undefined,
       });
 
       setReceipt(res);
       onSuccess();
     } catch (err: any) {
-      setErrorMessage(err.message || 'Transfer failed. Please try again.');
+      setErrorMessage(err.message || 'Transfer failed. Please verify beneficiary details.');
     } finally {
       setSubmitting(false);
     }
@@ -82,7 +83,7 @@ export const TransferModal: React.FC<TransferModalProps> = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '500px' }}>
+      <div className="modal-content" style={{ maxWidth: '500px', padding: '32px', background: '#ffffff' }}>
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -90,58 +91,62 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               width: '38px',
               height: '38px',
               borderRadius: '10px',
-              background: 'rgba(37, 99, 235, 0.2)',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <ArrowRightLeft size={20} color="#38bdf8" />
+              <ArrowRightLeft size={18} color="#1d4ed8" />
             </div>
             <div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
-                Instant Fund Transfer
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                Domestic Fund Transfer
               </h3>
-              <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-                Real-time IMPS / NEFT Transfer
-              </p>
+              <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                Instant 24x7 IMPS / NEFT Settlement
+              </div>
             </div>
           </div>
 
           <button
             onClick={handleClose}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            style={{ background: '#f1f5f9', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '4px', cursor: 'pointer', color: 'var(--text-secondary)' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {receipt ? (
-          /* Transfer Success Receipt */
-          <div style={{ textAlign: 'center', padding: '12px 0' }}>
+          /* Success Receipt View */
+          <div style={{ textAlign: 'center', padding: '10px 0' }}>
             <div style={{
               width: '56px',
               height: '56px',
               borderRadius: '50%',
-              background: 'rgba(16, 185, 129, 0.15)',
+              background: '#ecfdf5',
+              border: '1px solid #a7f3d0',
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: '14px',
             }}>
-              <CheckCircle2 size={32} color="#10b981" />
+              <CheckCircle2 size={32} color="#059669" />
             </div>
-            <h4 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff' }}>
-              Transfer Successful!
-            </h4>
-            <div className="mono" style={{ fontSize: '1.8rem', fontWeight: 800, color: '#10b981', margin: '8px 0' }}>
+
+            <div style={{ fontSize: '0.8rem', color: '#059669', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              Transfer Executed Successfully
+            </div>
+            <h4 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', margin: '8px 0' }} className="mono">
               {formatCurrency(receipt.amount)}
-            </div>
+            </h4>
             <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
               Successfully debited from your {selectedAccount?.account_type} account and credited to <strong>{receipt.beneficiary_name}</strong>.
             </p>
 
             <div style={{
-              background: 'rgba(0,0,0,0.3)',
+              background: '#f8fafc',
+              border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '14px',
               margin: '20px 0',
@@ -149,21 +154,21 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               fontSize: '0.78rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '6px',
+              gap: '8px',
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Reference ID:</span>
-                <span className="mono" style={{ color: '#fff', fontWeight: 600 }}>{receipt.reference_id}</span>
+                <span className="mono" style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{receipt.reference_id}</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Updated Balance:</span>
-                <span className="mono" style={{ color: '#38bdf8', fontWeight: 700 }}>
+                <span className="mono" style={{ color: '#1d4ed8', fontWeight: 700 }}>
                   {formatCurrency(receipt.remaining_balance)}
                 </span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-muted)' }}>Mode:</span>
-                <span style={{ color: '#10b981', fontWeight: 600 }}>IMPS Real-time</span>
+                <span style={{ color: '#059669', fontWeight: 600 }}>IMPS Real-time</span>
               </div>
             </div>
 
@@ -180,11 +185,11 @@ export const TransferModal: React.FC<TransferModalProps> = ({
           <form onSubmit={handleTransfer} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {errorMessage && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                color: '#f87171',
+                color: '#dc2626',
                 fontSize: '0.8rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -204,17 +209,17 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                 onChange={(e) => setSourceAccountId(Number(e.target.value))}
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '10px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
               >
                 {accounts.map((acc) => (
-                  <option key={acc.id} value={acc.id} style={{ background: '#0f172a', color: '#fff' }}>
+                  <option key={acc.id} value={acc.id}>
                     {acc.account_type.toUpperCase()} ({maskAccountNumber(acc.account_number)}) - Balance: {formatCurrency(acc.balance)}
                   </option>
                 ))}
@@ -232,11 +237,11 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                 placeholder="e.g. Rahul Sharma"
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '9px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
@@ -246,20 +251,20 @@ export const TransferModal: React.FC<TransferModalProps> = ({
 
             <div>
               <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                Beneficiary Account Number / UPI ID
+                Beneficiary Account Number / VPA
               </label>
               <input
                 type="text"
                 value={beneficiaryAccount}
                 onChange={(e) => setBeneficiaryAccount(e.target.value)}
-                placeholder="e.g. 987654321012 or rahul@upi"
+                placeholder="e.g. 987654321012"
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '9px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
@@ -272,24 +277,27 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                 <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                   Amount to Transfer (₹)
                 </label>
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="e.g. 5000"
-                  style={{
-                    width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '8px',
-                    padding: '9px 12px',
-                    color: '#fff',
-                    fontSize: '0.95rem',
-                    fontWeight: 700,
-                    outline: 'none',
-                  }}
-                  required
-                />
+                <div style={{ position: 'relative' }}>
+                  <span style={{ position: 'absolute', left: '12px', top: '9px', fontWeight: 700, color: '#1d4ed8' }}>₹</span>
+                  <input
+                    type="number"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    placeholder="5000"
+                    style={{
+                      width: '100%',
+                      background: '#ffffff',
+                      border: '1px solid var(--border-strong)',
+                      borderRadius: '8px',
+                      padding: '9px 12px 9px 28px',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.95rem',
+                      fontWeight: 700,
+                      outline: 'none',
+                    }}
+                    required
+                  />
+                </div>
               </div>
 
               <div>
@@ -300,14 +308,14 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                   type="text"
                   value={remarks}
                   onChange={(e) => setRemarks(e.target.value)}
-                  placeholder="e.g. Rent, Gift"
+                  placeholder="Rent / Bills"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '9px 12px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.85rem',
                     outline: 'none',
                   }}
@@ -315,34 +323,27 @@ export const TransferModal: React.FC<TransferModalProps> = ({
               </div>
             </div>
 
-            {/* Quick Amount Chips */}
-            <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-              {[1000, 5000, 10000, 25000].map((amt) => (
-                <button
-                  key={amt}
-                  type="button"
-                  onClick={() => setAmount(String(amt))}
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid var(--border-subtle)',
-                    borderRadius: '6px',
-                    padding: '4px 8px',
-                    fontSize: '0.72rem',
-                    color: '#cbd5e1',
-                    cursor: 'pointer',
-                  }}
-                >
-                  +{formatCurrency(amt, false)}
-                </button>
-              ))}
+            <div style={{
+              background: '#f8fafc',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '10px 12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.74rem',
+              color: 'var(--text-muted)',
+            }}>
+              <Shield size={14} color="#059669" />
+              <span>Funds are transferred securely via RBI-monitored IMPS switch.</span>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '16px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
               <button
                 type="button"
                 onClick={handleClose}
                 className="btn-secondary"
-                disabled={submitting}
+                style={{ flex: 1, justifyContent: 'center' }}
               >
                 Cancel
               </button>
@@ -350,9 +351,10 @@ export const TransferModal: React.FC<TransferModalProps> = ({
                 type="submit"
                 className="btn-primary"
                 disabled={submitting}
+                style={{ flex: 1.5, justifyContent: 'center' }}
               >
-                <Send size={14} />
-                <span>{submitting ? 'Transferring...' : 'Send Money'}</span>
+                {submitting ? 'Transferring...' : 'Authorize Transfer'}
+                <Send size={15} />
               </button>
             </div>
           </form>

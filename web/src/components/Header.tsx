@@ -34,8 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
     <header style={{
       height: '72px',
       borderBottom: '1px solid var(--border-subtle)',
-      background: 'rgba(15, 23, 42, 0.95)',
-      backdropFilter: 'blur(16px)',
+      background: '#ffffff',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -43,32 +42,33 @@ export const Header: React.FC<HeaderProps> = ({
       position: 'sticky',
       top: 0,
       zIndex: 100,
+      boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
     }}>
       {/* Brand & Bank Title */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
         <div style={{
-          width: '40px',
-          height: '40px',
+          width: '42px',
+          height: '42px',
           borderRadius: '12px',
-          background: 'linear-gradient(135deg, #2563eb, #1e3a8a)',
+          background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          boxShadow: '0 0 15px rgba(37, 99, 235, 0.4)',
+          boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
         }}>
           <Shield size={22} color="#ffffff" />
         </div>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '-0.02em', color: '#fff' }}>
+            <span style={{ fontWeight: 800, fontSize: '1.25rem', letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
               APEX
             </span>
-            <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#38bdf8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <span style={{ fontWeight: 700, fontSize: '0.8rem', color: '#1d4ed8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Digital Bank
             </span>
           </div>
           <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
-            NetBanking & Conversational Copilot
+            NetBanking & AI Conversational Copilot
           </div>
         </div>
       </div>
@@ -78,18 +78,18 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           onClick={onOpenTransfer}
           className="btn-secondary"
-          style={{ padding: '7px 14px', fontSize: '0.78rem' }}
+          style={{ padding: '8px 16px', fontSize: '0.82rem' }}
         >
-          <ArrowRightLeft size={14} color="#38bdf8" />
+          <ArrowRightLeft size={15} color="#1d4ed8" />
           <span>Transfer Funds</span>
         </button>
 
         <button
           onClick={onOpenBillPay}
           className="btn-secondary"
-          style={{ padding: '7px 14px', fontSize: '0.78rem' }}
+          style={{ padding: '8px 16px', fontSize: '0.82rem' }}
         >
-          <Receipt size={14} color="#f59e0b" />
+          <Receipt size={15} color="#d97706" />
           <span>Pay Bills</span>
         </button>
 
@@ -97,15 +97,15 @@ export const Header: React.FC<HeaderProps> = ({
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          background: 'rgba(30, 41, 59, 0.6)',
+          background: 'var(--bg-muted)',
           border: '1px solid var(--border-subtle)',
           padding: '6px 12px',
           borderRadius: '9999px',
           fontSize: '0.78rem',
         }}>
-          <Radio size={14} color="#10b981" />
+          <Radio size={14} color="#059669" />
           <span style={{ color: 'var(--text-secondary)' }}>AI Model:</span>
-          <span style={{ color: '#38bdf8', fontWeight: 600 }}>Gemini 3.8 Flash</span>
+          <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Gemini 3.8 Flash</span>
         </div>
       </div>
 
@@ -115,10 +115,10 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onOpenCopilot}
           style={{
             background: copilotOpen 
-              ? 'linear-gradient(135deg, #2563eb, #3b82f6)' 
-              : 'rgba(37, 99, 235, 0.15)',
-            border: '1px solid rgba(37, 99, 235, 0.4)',
-            color: '#fff',
+              ? 'linear-gradient(135deg, #1d4ed8, #2563eb)' 
+              : 'rgba(37, 99, 235, 0.08)',
+            border: copilotOpen ? '1px solid #1d4ed8' : '1px solid rgba(37, 99, 235, 0.25)',
+            color: copilotOpen ? '#ffffff' : '#1d4ed8',
             padding: '8px 16px',
             borderRadius: '9999px',
             fontSize: '0.85rem',
@@ -128,11 +128,11 @@ export const Header: React.FC<HeaderProps> = ({
             alignItems: 'center',
             gap: '8px',
             transition: 'all 0.2s ease',
-            boxShadow: copilotOpen ? '0 0 20px rgba(37, 99, 235, 0.4)' : 'none',
+            boxShadow: copilotOpen ? '0 4px 12px rgba(37, 99, 235, 0.3)' : 'none',
           }}
         >
-          <Sparkles size={16} color={copilotOpen ? '#fff' : '#38bdf8'} />
-          <span>{copilotOpen ? 'Copilot Active' : 'Ask Copilot'}</span>
+          <Sparkles size={16} color={copilotOpen ? '#ffffff' : '#1d4ed8'} />
+          <span>{copilotOpen ? 'Copilot Open' : 'Ask Copilot'}</span>
         </button>
 
         <div style={{ width: '1px', height: '28px', backgroundColor: 'var(--border-subtle)' }} />
@@ -140,49 +140,55 @@ export const Header: React.FC<HeaderProps> = ({
         {customer ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontWeight: 700, fontSize: '0.875rem', color: '#fff' }}>
+              <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
                 {customer.full_name || `${customer.first_name} ${customer.last_name}`}
               </div>
-              <div style={{ fontSize: '0.72rem', color: '#10b981', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.72rem', color: '#059669', fontWeight: 600 }}>
                 CIBIL: {customer.credit_score || 785} • Verified
               </div>
             </div>
 
             <div style={{
-              width: '36px',
-              height: '36px',
+              width: '38px',
+              height: '38px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #475569, #334155)',
-              border: '2px solid rgba(255,255,255,0.15)',
+              background: '#e2e8f0',
+              border: '2px solid #cbd5e1',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <User size={18} color="#f8fafc" />
+              <User size={18} color="#475569" />
             </div>
 
             <button
               onClick={onLogout}
-              title="Sign Out"
+              title="Sign Out of Apex Bank"
               style={{
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                color: '#f87171',
-                padding: '6px 8px',
-                borderRadius: '6px',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#dc2626',
+                padding: '7px 9px',
+                borderRadius: '8px',
                 cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                fontSize: '0.75rem',
+                fontWeight: 600,
               }}
             >
               <LogOut size={14} />
+              <span>Exit</span>
             </button>
           </div>
         ) : (
           <button
             onClick={onOpenAuth}
             className="btn-primary"
-            style={{ padding: '8px 14px', fontSize: '0.8rem' }}
+            style={{ padding: '9px 18px', fontSize: '0.85rem' }}
           >
-            <LogIn size={14} />
+            <LogIn size={15} />
             <span>Sign In / Register</span>
           </button>
         )}

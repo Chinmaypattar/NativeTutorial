@@ -37,47 +37,46 @@ export const StatementModal: React.FC<StatementModalProps> = ({
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '780px', maxHeight: '90vh', overflowY: 'auto', padding: '36px' }}>
+      <div className="modal-content" style={{ maxWidth: '780px', maxHeight: '90vh', overflowY: 'auto', padding: '36px', background: '#ffffff' }}>
         {/* Actions Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={handlePrint} className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.78rem' }}>
-              <Printer size={14} />
-              <span>Print Statement</span>
+            <button onClick={handlePrint} className="btn-secondary" style={{ padding: '7px 14px', fontSize: '0.8rem' }}>
+              <Printer size={15} />
+              <span>Print / Save as PDF</span>
             </button>
-            <button
-              onClick={() => alert('Account statement PDF downloaded to your Downloads folder.')}
-              className="btn-primary"
-              style={{ padding: '6px 12px', fontSize: '0.78rem' }}
-            >
-              <Download size={14} />
-              <span>Download PDF</span>
+            <button onClick={handlePrint} className="btn-secondary" style={{ padding: '7px 14px', fontSize: '0.8rem' }}>
+              <Download size={15} />
+              <span>Export CSV</span>
             </button>
           </div>
 
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+            style={{ background: '#f1f5f9', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '6px', cursor: 'pointer', color: 'var(--text-secondary)' }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Printable Statement Document */}
         <div style={{
-          background: 'rgba(15, 23, 42, 0.95)',
-          border: '1px solid var(--border-subtle)',
+          background: '#ffffff',
+          border: '1px solid var(--border-strong)',
           borderRadius: 'var(--radius-lg)',
           padding: '28px',
+          boxShadow: 'var(--shadow-sm)',
         }}>
           {/* Statement Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '2px solid #e2e8f0', paddingBottom: '20px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Shield size={24} color="#38bdf8" />
-                <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#fff' }}>APEX DIGITAL BANK</span>
+                <Shield size={24} color="#1d4ed8" />
+                <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+                  APEX DIGITAL BANK
+                </span>
               </div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
                 Branch: Bandra Kurla Complex, Mumbai • IFSC: APEX0001042
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -86,7 +85,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#38bdf8', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: '#1d4ed8', textTransform: 'uppercase' }}>
                 Official Account Statement
               </div>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
@@ -99,20 +98,20 @@ export const StatementModal: React.FC<StatementModalProps> = ({
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', margin: '20px 0', fontSize: '0.82rem' }}>
             <div>
               <div style={{ color: 'var(--text-muted)' }}>Account Holder:</div>
-              <div style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>
+              <div style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem', marginTop: '2px' }}>
                 {customer?.full_name || 'Pranita Sharma'}
               </div>
-              <div style={{ color: 'var(--text-secondary)' }}>{customer?.email}</div>
-              <div style={{ color: 'var(--text-secondary)' }}>{customer?.phone}</div>
+              <div style={{ color: 'var(--text-secondary)' }}>{customer?.email || 'pranita@apexbank.com'}</div>
+              <div style={{ color: 'var(--text-secondary)' }}>{customer?.phone || '+91 98765 43210'}</div>
             </div>
 
             <div style={{ textAlign: 'right' }}>
               <div style={{ color: 'var(--text-muted)' }}>Account Number:</div>
-              <div className="mono" style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>
+              <div className="mono" style={{ fontWeight: 800, color: 'var(--text-primary)', fontSize: '1rem', marginTop: '2px' }}>
                 {maskAccountNumber(account.account_number)}
               </div>
               <div style={{ color: 'var(--text-secondary)' }}>Account Type: {account.account_type.toUpperCase()}</div>
-              <div style={{ color: '#10b981', fontWeight: 700 }}>
+              <div style={{ color: '#059669', fontWeight: 800, fontSize: '0.95rem', marginTop: '2px' }}>
                 Closing Balance: {formatCurrency(account.balance)}
               </div>
             </div>
@@ -121,32 +120,32 @@ export const StatementModal: React.FC<StatementModalProps> = ({
           {/* Statement Table */}
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem', marginTop: '16px' }}>
             <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid var(--border-subtle)' }}>
-                <th style={{ padding: '8px 10px', textAlign: 'left', color: 'var(--text-muted)' }}>Date</th>
-                <th style={{ padding: '8px 10px', textAlign: 'left', color: 'var(--text-muted)' }}>Particulars / Description</th>
-                <th style={{ padding: '8px 10px', textAlign: 'left', color: 'var(--text-muted)' }}>Category</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: 'var(--text-muted)' }}>Debit (₹)</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', color: 'var(--text-muted)' }}>Credit (₹)</th>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-strong)' }}>
+                <th style={{ padding: '10px 12px', textAlign: 'left', color: 'var(--text-secondary)', fontWeight: 700 }}>Date</th>
+                <th style={{ padding: '10px 12px', textAlign: 'left', color: 'var(--text-secondary)', fontWeight: 700 }}>Particulars / Description</th>
+                <th style={{ padding: '10px 12px', textAlign: 'left', color: 'var(--text-secondary)', fontWeight: 700 }}>Category</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-secondary)', fontWeight: 700 }}>Debit (₹)</th>
+                <th style={{ padding: '10px 12px', textAlign: 'right', color: 'var(--text-secondary)', fontWeight: 700 }}>Credit (₹)</th>
               </tr>
             </thead>
             <tbody>
               {accountTransactions.slice(0, 15).map((txn) => {
                 const isCredit = txn.transaction_type === 'credit';
                 return (
-                  <tr key={txn.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                    <td style={{ padding: '8px 10px', color: 'var(--text-secondary)' }}>
+                  <tr key={txn.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
+                    <td style={{ padding: '10px 12px', color: 'var(--text-secondary)' }}>
                       {formatDateTime(txn.timestamp)}
                     </td>
-                    <td style={{ padding: '8px 10px', color: '#fff' }}>
+                    <td style={{ padding: '10px 12px', color: 'var(--text-primary)', fontWeight: 500 }}>
                       {txn.merchant || txn.beneficiary || txn.description}
                     </td>
-                    <td style={{ padding: '8px 10px', color: 'var(--text-muted)' }}>
+                    <td style={{ padding: '10px 12px', color: 'var(--text-muted)' }}>
                       {txn.category}
                     </td>
-                    <td style={{ padding: '8px 10px', textAlign: 'right', color: isCredit ? 'transparent' : '#f87171' }} className="mono">
+                    <td style={{ padding: '10px 12px', textAlign: 'right', color: isCredit ? 'transparent' : '#dc2626', fontWeight: 600 }} className="mono">
                       {!isCredit ? formatCurrency(txn.amount) : '—'}
                     </td>
-                    <td style={{ padding: '8px 10px', textAlign: 'right', color: isCredit ? '#10b981' : 'transparent' }} className="mono">
+                    <td style={{ padding: '10px 12px', textAlign: 'right', color: isCredit ? '#059669' : 'transparent', fontWeight: 600 }} className="mono">
                       {isCredit ? formatCurrency(txn.amount) : '—'}
                     </td>
                   </tr>
@@ -155,10 +154,15 @@ export const StatementModal: React.FC<StatementModalProps> = ({
             </tbody>
           </table>
 
-          {/* Statement Footer */}
-          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-            <span>This is a computer-generated statement and does not require a physical signature.</span>
-            <span>Page 1 of 1</span>
+          {/* Footer certification */}
+          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            <div>
+              Computer-generated document. Does not require physical signature under IT Act 2000.
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#059669', fontWeight: 600 }}>
+              <Shield size={14} />
+              <span>Verified Apex Core Banking Record</span>
+            </div>
           </div>
         </div>
       </div>

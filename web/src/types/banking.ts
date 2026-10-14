@@ -52,6 +52,7 @@ export interface CreditCard {
   current_balance: number;
   due_date: string;
   reward_points: number;
+  apr?: number;
   utilization_ratio?: number;
 }
 

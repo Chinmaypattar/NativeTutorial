@@ -114,9 +114,34 @@ export const App: React.FC = () => {
     setIsCopilotOpen(true);
   };
 
+  const handleOpenTransfer = () => {
+    if (!customer) {
+      setIsAuthOpen(true);
+      return;
+    }
+    setIsTransferOpen(true);
+  };
+
+  const handleOpenBillPay = () => {
+    if (!customer) {
+      setIsAuthOpen(true);
+      return;
+    }
+    setIsBillPayOpen(true);
+  };
+
   const handleLogout = () => {
     api.logout();
     setCustomer(null);
+    setAccounts(null);
+    setTransactions([]);
+    setCards([]);
+    setLoans([]);
+    setInvestments([]);
+    setBuckets([]);
+    setWellness(null);
+    setOffers([]);
+    setForecast(null);
     loadBankingData();
   };
 
@@ -137,8 +162,8 @@ export const App: React.FC = () => {
           customer={customer}
           onOpenCopilot={() => setIsCopilotOpen(!isCopilotOpen)}
           copilotOpen={isCopilotOpen}
-          onOpenTransfer={() => setIsTransferOpen(true)}
-          onOpenBillPay={() => setIsBillPayOpen(true)}
+          onOpenTransfer={handleOpenTransfer}
+          onOpenBillPay={handleOpenBillPay}
           onOpenAuth={() => setIsAuthOpen(true)}
           onLogout={handleLogout}
         />
@@ -171,6 +196,57 @@ export const App: React.FC = () => {
           </div>
         )}
 
+        {!customer && !loading && (
+          <div style={{
+            margin: '20px 36px 0',
+            padding: '16px 22px',
+            background: 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',
+            border: '1px solid #bfdbfe',
+            borderRadius: 'var(--radius-lg)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '16px',
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.06)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '10px',
+                background: '#1d4ed8',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ffffff',
+                boxShadow: '0 4px 10px rgba(29, 78, 216, 0.25)',
+                flexShrink: 0,
+              }}>
+                <Sparkles size={20} />
+              </div>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1e3a8a' }}>
+                  Guest Demo Session Active
+                </div>
+                <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '2px' }}>
+                  You are currently logged out. Sign in or register to access fund transfers, bill pay, official statements, and your personal AI financial advisor.
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => setIsAuthOpen(true)}
+                className="btn-primary"
+                style={{ padding: '8px 18px', fontSize: '0.82rem' }}
+              >
+                <span>Sign In / Register</span>
+              </button>
+            </div>
+          </div>
+        )}
+
         <main className="tab-viewport animate-fade-in">
           {loading ? (
             <div style={{
@@ -184,8 +260,8 @@ export const App: React.FC = () => {
               <div style={{
                 width: '40px',
                 height: '40px',
-                border: '3px solid rgba(37, 99, 235, 0.2)',
-                borderTopColor: '#38bdf8',
+                border: '3px solid rgba(29, 78, 216, 0.15)',
+                borderTopColor: '#1d4ed8',
                 borderRadius: '50%',
                 animation: 'bounceDot 1s infinite',
               }} />
@@ -211,7 +287,7 @@ export const App: React.FC = () => {
                 <AccountsTab
                   accounts={accounts}
                   onAskCopilot={handleAskCopilot}
-                  onOpenTransfer={() => setIsTransferOpen(true)}
+                  onOpenTransfer={handleOpenTransfer}
                   onOpenStatement={(acc) => setStatementAccount(acc)}
                 />
               )}
@@ -273,7 +349,7 @@ export const App: React.FC = () => {
             position: 'fixed',
             bottom: '28px',
             right: '28px',
-            background: 'linear-gradient(135deg, #2563eb, #38bdf8)',
+            background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
             color: '#fff',
             border: 'none',
             borderRadius: '9999px',
@@ -284,17 +360,17 @@ export const App: React.FC = () => {
             display: 'flex',
             alignItems: 'center',
             gap: '10px',
-            boxShadow: '0 8px 25px rgba(37, 99, 235, 0.5)',
+            boxShadow: '0 8px 25px rgba(29, 78, 216, 0.35)',
             zIndex: 150,
             transition: 'all 0.2s ease',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
-            e.currentTarget.style.boxShadow = '0 12px 30px rgba(37, 99, 235, 0.7)';
+            e.currentTarget.style.boxShadow = '0 12px 30px rgba(29, 78, 216, 0.45)';
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 8px 25px rgba(37, 99, 235, 0.5)';
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(29, 78, 216, 0.35)';
           }}
         >
           <Sparkles size={18} />

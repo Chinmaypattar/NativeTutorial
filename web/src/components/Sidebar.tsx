@@ -43,22 +43,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
   return (
     <aside style={{
       width: '260px',
-      background: 'var(--bg-secondary)',
+      background: '#ffffff',
       borderRight: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
       padding: '24px 16px',
       flexShrink: 0,
+      boxShadow: '1px 0 3px rgba(15, 23, 42, 0.02)',
     }}>
       <div>
         <div style={{
-          fontSize: '0.7rem',
+          fontSize: '0.72rem',
           fontWeight: 700,
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
           color: 'var(--text-muted)',
-          padding: '0 12px 12px',
+          padding: '0 12px 14px',
         }}>
           Online Banking Portal
         </div>
@@ -77,10 +78,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
                   gap: '12px',
                   padding: '11px 14px',
                   borderRadius: 'var(--radius-md)',
-                  border: isActive ? '1px solid rgba(59, 130, 246, 0.3)' : '1px solid transparent',
-                  background: isActive ? 'rgba(37, 99, 235, 0.15)' : 'transparent',
-                  color: isActive ? '#60a5fa' : 'var(--text-secondary)',
-                  fontWeight: isActive ? 600 : 500,
+                  border: isActive ? '1px solid rgba(29, 78, 216, 0.25)' : '1px solid transparent',
+                  background: isActive ? 'rgba(37, 99, 235, 0.08)' : 'transparent',
+                  color: isActive ? '#1d4ed8' : 'var(--text-secondary)',
+                  fontWeight: isActive ? 700 : 500,
                   fontSize: '0.875rem',
                   cursor: 'pointer',
                   textAlign: 'left',
@@ -89,8 +90,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-                    e.currentTarget.style.color = '#fff';
+                    e.currentTarget.style.background = 'var(--bg-card-hover)';
+                    e.currentTarget.style.color = 'var(--text-primary)';
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -100,7 +101,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
                   }
                 }}
               >
-                <Icon size={18} color={isActive ? '#3b82f6' : 'var(--text-muted)'} />
+                <Icon size={18} color={isActive ? '#1d4ed8' : '#64748b'} />
                 <span>{item.label}</span>
               </button>
             );
@@ -111,27 +112,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
       {/* AI Copilot Sidecard */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
         <div style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(30, 58, 138, 0.3))',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #e0f2fe 100%)',
+          border: '1px solid #bfdbfe',
           borderRadius: 'var(--radius-lg)',
           padding: '16px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-            <Sparkles size={18} color="#38bdf8" />
-            <span style={{ fontWeight: 700, fontSize: '0.85rem', color: '#fff' }}>AI Copilot Ready</span>
+            <Sparkles size={18} color="#1d4ed8" />
+            <span style={{ fontWeight: 800, fontSize: '0.85rem', color: '#1e3a8a' }}>AI Copilot Ready</span>
           </div>
-          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4, marginBottom: '12px' }}>
-            Ask natural questions about spending, balances, loan affordability, or savings goals.
+          <p style={{ fontSize: '0.75rem', color: '#334155', lineHeight: 1.4, marginBottom: '12px' }}>
+            Ask natural queries about spend on Flipkart, account balances, loan affordability, or savings.
           </p>
           <button
             onClick={onOpenCopilot}
             style={{
               width: '100%',
-              background: '#2563eb',
-              color: '#fff',
+              background: '#1d4ed8',
+              color: '#ffffff',
               border: 'none',
               borderRadius: 'var(--radius-sm)',
-              padding: '8px',
+              padding: '9px',
               fontSize: '0.8rem',
               fontWeight: 600,
               cursor: 'pointer',
@@ -139,6 +140,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
               alignItems: 'center',
               justifyContent: 'center',
               gap: '6px',
+              boxShadow: '0 2px 6px rgba(29, 78, 216, 0.25)',
             }}
           >
             <Sparkles size={14} />
@@ -152,13 +154,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onSelectTab, onOpen
           alignItems: 'center',
           gap: '8px',
           padding: '8px 12px',
-          background: 'rgba(15, 23, 42, 0.5)',
+          background: '#f8fafc',
           borderRadius: 'var(--radius-sm)',
           border: '1px solid var(--border-subtle)',
           fontSize: '0.72rem',
           color: 'var(--text-muted)',
         }}>
-          <Lock size={12} color="#10b981" />
+          <Lock size={12} color="#059669" />
           <span>256-Bit SSL Encrypted Banking</span>
         </div>
       </div>

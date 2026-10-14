@@ -1,13 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   Search,
-  Filter,
   ArrowDownLeft,
   ArrowUpRight,
-  TrendingDown,
   ShoppingBag,
-  Download,
-  Calendar,
 } from 'lucide-react';
 import { Transaction } from '../../types/banking';
 import { formatCurrency, formatDateTime } from '../../utils/formatters';
@@ -65,7 +61,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
       {/* Page Title & Actions */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>Transaction Ledger</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>Transaction Ledger</h1>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Search, filter, and audit all incoming and outgoing cashflows
           </p>
@@ -85,8 +81,8 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
       {/* Merchant Intelligence Card (shown when user searches a merchant) */}
       {merchantStats && (
         <div style={{
-          background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(15, 23, 42, 0.8))',
-          border: '1px solid rgba(59, 130, 246, 0.3)',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+          border: '1px solid #bfdbfe',
           borderRadius: 'var(--radius-lg)',
           padding: '20px 24px',
           display: 'flex',
@@ -94,24 +90,27 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: '16px',
+          boxShadow: 'var(--shadow-sm)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div style={{
               width: '46px',
               height: '46px',
               borderRadius: '12px',
-              background: 'rgba(37, 99, 235, 0.3)',
+              background: '#ffffff',
+              border: '1px solid #bfdbfe',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              boxShadow: '0 2px 6px rgba(37, 99, 235, 0.15)',
             }}>
-              <ShoppingBag size={24} color="#38bdf8" />
+              <ShoppingBag size={24} color="#1d4ed8" />
             </div>
             <div>
-              <div style={{ fontSize: '0.78rem', color: '#93c5fd', textTransform: 'uppercase', fontWeight: 600 }}>
-                Merchant Spend Analytics
+              <div style={{ fontSize: '0.78rem', color: '#1e40af', textTransform: 'uppercase', fontWeight: 700 }}>
+                Merchant Spend Intelligence
               </div>
-              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#fff' }}>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1e3a8a' }}>
                 {merchantStats.merchant}
               </h3>
             </div>
@@ -119,20 +118,20 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
 
           <div style={{ display: 'flex', gap: '28px', flexWrap: 'wrap' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Total Spend</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }} className="mono">
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Total Spend</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#1e3a8a' }} className="mono">
                 {formatCurrency(merchantStats.total)}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Transactions</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }} className="mono">
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Transactions</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#1d4ed8' }} className="mono">
                 {merchantStats.count}
               </div>
             </div>
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Average Ticket</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#94a3b8' }} className="mono">
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Average Ticket</div>
+              <div style={{ fontSize: '1.35rem', fontWeight: 800, color: '#0f172a' }} className="mono">
                 {formatCurrency(merchantStats.average)}
               </div>
             </div>
@@ -157,11 +156,11 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '100%',
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid var(--border-subtle)',
+                background: '#f8fafc',
+                border: '1px solid var(--border-strong)',
                 borderRadius: 'var(--radius-md)',
                 padding: '10px 14px 10px 38px',
-                color: '#fff',
+                color: 'var(--text-primary)',
                 fontSize: '0.85rem',
                 outline: 'none',
               }}
@@ -169,7 +168,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
           </div>
 
           {/* Type Toggle */}
-          <div style={{ display: 'flex', background: 'rgba(255,255,255,0.04)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
+          <div style={{ display: 'flex', background: '#f1f5f9', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-subtle)' }}>
             {(['all', 'debit', 'credit'] as const).map((t) => (
               <button
                 key={t}
@@ -178,12 +177,13 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
                   padding: '6px 14px',
                   borderRadius: 'var(--radius-sm)',
                   border: 'none',
-                  background: selectedType === t ? '#2563eb' : 'transparent',
-                  color: selectedType === t ? '#fff' : 'var(--text-secondary)',
+                  background: selectedType === t ? '#1d4ed8' : 'transparent',
+                  color: selectedType === t ? '#ffffff' : 'var(--text-secondary)',
                   fontWeight: 600,
                   fontSize: '0.78rem',
                   cursor: 'pointer',
                   textTransform: 'capitalize',
+                  transition: 'all 0.15s ease',
                 }}
               >
                 {t}
@@ -201,13 +201,14 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
               style={{
                 padding: '5px 12px',
                 borderRadius: '9999px',
-                border: selectedCategory === cat ? '1px solid #3b82f6' : '1px solid var(--border-subtle)',
-                background: selectedCategory === cat ? 'rgba(37, 99, 235, 0.2)' : 'rgba(255,255,255,0.02)',
-                color: selectedCategory === cat ? '#60a5fa' : 'var(--text-secondary)',
+                border: selectedCategory === cat ? '1px solid #1d4ed8' : '1px solid var(--border-strong)',
+                background: selectedCategory === cat ? '#eff6ff' : '#ffffff',
+                color: selectedCategory === cat ? '#1d4ed8' : 'var(--text-secondary)',
                 fontSize: '0.75rem',
                 fontWeight: 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
+                transition: 'all 0.15s ease',
               }}
             >
               {cat === 'all' ? 'All Categories' : cat}
@@ -220,20 +221,20 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
       <div className="bank-card" style={{ padding: 0, overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
-            <tr style={{ background: 'rgba(255, 255, 255, 0.02)', borderBottom: '1px solid var(--border-subtle)' }}>
-              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+            <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-strong)' }}>
+              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Transaction & Merchant
               </th>
-              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Category
               </th>
-              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Date & Time
               </th>
-              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
                 Type
               </th>
-              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' }}>
+              <th style={{ padding: '16px 20px', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', textAlign: 'right' }}>
                 Amount
               </th>
             </tr>
@@ -256,7 +257,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
                       transition: 'background 0.15s ease',
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.background = 'rgba(255, 255, 255, 0.02)';
+                      e.currentTarget.style.background = '#f8fafc';
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.background = 'transparent';
@@ -268,35 +269,39 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
                           width: '36px',
                           height: '36px',
                           borderRadius: '8px',
-                          background: isCredit ? 'rgba(16, 185, 129, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                          background: isCredit ? '#ecfdf5' : '#fef2f2',
+                          border: isCredit ? '1px solid #a7f3d0' : '1px solid #fecaca',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          flexShrink: 0,
                         }}>
                           {isCredit ? (
-                            <ArrowDownLeft size={16} color="#10b981" />
+                            <ArrowDownLeft size={18} color="#059669" />
                           ) : (
-                            <ArrowUpRight size={16} color="#ef4444" />
+                            <ArrowUpRight size={18} color="#dc2626" />
                           )}
                         </div>
                         <div>
-                          <div style={{ fontWeight: 600, fontSize: '0.875rem', color: '#fff' }}>
+                          <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
                             {txn.merchant || txn.beneficiary || txn.description}
                           </div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                            {txn.description}
-                          </div>
+                          {txn.merchant && txn.description && txn.description !== txn.merchant && (
+                            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                              {txn.description}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </td>
 
                     <td style={{ padding: '16px 20px' }}>
-                      <span className="badge badge-info" style={{ textTransform: 'none' }}>
+                      <span className="badge badge-info" style={{ fontSize: '0.7rem' }}>
                         {txn.category}
                       </span>
                     </td>
 
-                    <td style={{ padding: '16px 20px', fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                    <td style={{ padding: '16px 20px', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
                       {formatDateTime(txn.timestamp)}
                     </td>
 
@@ -307,16 +312,16 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({ transactions, 
                     </td>
 
                     <td style={{ padding: '16px 20px', textAlign: 'right' }}>
-                      <span
+                      <div
                         className="mono"
                         style={{
-                          fontWeight: 700,
+                          fontWeight: 800,
                           fontSize: '0.95rem',
-                          color: isCredit ? '#10b981' : '#f8fafc',
+                          color: isCredit ? '#059669' : 'var(--text-primary)',
                         }}
                       >
                         {isCredit ? '+' : '-'}{formatCurrency(txn.amount)}
-                      </span>
+                      </div>
                     </td>
                   </tr>
                 );

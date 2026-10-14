@@ -185,3 +185,29 @@ async def get_current_customer_id(
             except ValueError:
                 pass
     return settings.DEFAULT_CUSTOMER_ID
+
+
+async def get_authenticated_customer_id(
+    auth: HTTPAuthorizationCredentials = Security(security),
+) -> int:
+    """Requires a valid JWT token. Raises 401 if missing or invalid."""
+    if not auth or not auth.credentials:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Authentication required. Please log in.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    payload = decode_access_token(auth.credentials)
+    if not payload or "sub" not in payload:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired authentication token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    try:
+        return int(payload["sub"])
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid customer ID in token.",
+        )

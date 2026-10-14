@@ -23,7 +23,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
       {/* Page Title */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>
             Financial Wellness & Personalized Intelligence
           </h1>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
@@ -42,7 +42,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
 
       {/* Wellness Score Big Display */}
       <div style={{
-        background: 'linear-gradient(135deg, #0d3b66 0%, #0f172a 100%)',
+        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%)',
         border: '1px solid rgba(56, 189, 248, 0.3)',
         borderRadius: 'var(--radius-xl)',
         padding: '32px',
@@ -77,7 +77,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
               <span className="mono" style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff' }}>
                 {wellness?.overall_score || 78}
               </span>
-              <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>/ 100</span>
+              <span style={{ fontSize: '0.65rem', color: '#94a3b8' }}>/ 100</span>
             </div>
           </div>
 
@@ -91,27 +91,27 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
             <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', marginTop: '6px' }}>
               Strong Financial Standing
             </h2>
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', maxWidth: '440px' }}>
+            <p style={{ fontSize: '0.82rem', color: '#cbd5e1', maxWidth: '440px' }}>
               Your low credit card utilization and consistent savings rate place you in the top 15% of peers.
             </p>
           </div>
         </div>
 
         <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
-          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Savings Ratio</div>
+          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Savings Ratio</div>
             <div className="mono" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#10b981' }}>
               {((wellness?.savings_rate || 0.28) * 100).toFixed(0)}%
             </div>
           </div>
-          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Debt-to-Income</div>
+          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Debt-to-Income</div>
             <div className="mono" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#38bdf8' }}>
               {((wellness?.debt_to_income_ratio || 0.22) * 100).toFixed(0)}%
             </div>
           </div>
-          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.04)', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Emergency Runway</div>
+          <div style={{ padding: '12px 18px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.12)' }}>
+            <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Emergency Runway</div>
             <div className="mono" style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f59e0b' }}>
               {(wellness?.emergency_fund_months || 4.2).toFixed(1)} Mo
             </div>
@@ -123,7 +123,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
       <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
         {/* 5 Pillars List */}
         <div className="bank-card">
-          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
             5-Pillar Score Assessment
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -134,15 +134,15 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
               { name: 'Emergency Runway', score: 14, max_score: 20, detail: '4.2 months of living expenses secured in savings' },
               { name: 'Investment Allocation', score: 15, max_score: 20, detail: 'Diversified across equity mutual funds and fixed deposits' },
             ]).map((p, idx) => (
-              <div key={idx} style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
+              <div key={idx} style={{ padding: '12px', background: 'var(--bg-muted)', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontWeight: 600, fontSize: '0.85rem', color: '#fff' }}>{p.name}</span>
-                  <span className="mono" style={{ fontWeight: 700, fontSize: '0.85rem', color: '#38bdf8' }}>
+                  <span style={{ fontWeight: 600, fontSize: '0.85rem', color: 'var(--text-primary)' }}>{p.name}</span>
+                  <span className="mono" style={{ fontWeight: 700, fontSize: '0.85rem', color: '#1d4ed8' }}>
                     {p.score} / {p.max_score}
                   </span>
                 </div>
-                <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.08)', borderRadius: '3px', margin: '8px 0 6px' }}>
-                  <div style={{ width: `${(p.score / p.max_score) * 100}%`, height: '100%', background: '#10b981', borderRadius: '3px' }} />
+                <div style={{ width: '100%', height: '6px', background: '#e2e8f0', borderRadius: '3px', margin: '8px 0 6px' }}>
+                  <div style={{ width: `${(p.score / p.max_score) * 100}%`, height: '100%', background: '#059669', borderRadius: '3px' }} />
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                   {p.detail}
@@ -155,8 +155,8 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
         {/* AI Recommendations Coaching */}
         <div className="bank-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-            <Zap size={18} color="#f59e0b" />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>
+            <Zap size={18} color="#d97706" />
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
               Actionable Coaching Tips
             </h3>
           </div>
@@ -175,19 +175,19 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
                   gap: '12px',
                   padding: '12px 14px',
                   borderRadius: 'var(--radius-md)',
-                  background: 'rgba(245, 158, 11, 0.05)',
-                  border: '1px solid rgba(245, 158, 11, 0.15)',
+                  background: '#fffbeb',
+                  border: '1px solid #fef3c7',
                 }}
               >
                 <div style={{
                   width: '20px',
                   height: '20px',
                   borderRadius: '50%',
-                  background: 'rgba(245, 158, 11, 0.2)',
+                  background: '#fef3c7',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#f59e0b',
+                  color: '#b45309',
                   fontSize: '0.72rem',
                   fontWeight: 700,
                   flexShrink: 0,
@@ -208,29 +208,29 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Tag size={20} color="#38bdf8" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#fff' }}>
+            <Tag size={20} color="#1d4ed8" />
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>
               Tailored Banking Offers for You
             </h2>
           </div>
           <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            Based on your 785 credit score and spending patterns
+            Based on your credit score and real-time spending patterns
           </span>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
           {offers.map((offer) => (
-            <div key={offer.id} className="bank-card" style={{ background: 'linear-gradient(135deg, #1b263b, #0f172a)' }}>
+            <div key={offer.id} className="bank-card" style={{ background: '#ffffff', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <span className="badge badge-success">
                   {offer.eligibility_status || 'Pre-Approved'}
                 </span>
-                <span style={{ fontSize: '0.75rem', color: '#38bdf8', fontWeight: 600 }}>
+                <span style={{ fontSize: '0.75rem', color: '#1d4ed8', fontWeight: 700 }}>
                   {offer.interest_rate_or_rewards}
                 </span>
               </div>
 
-              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginTop: '12px' }}>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '12px' }}>
                 {offer.title}
               </h3>
               <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '4px', lineHeight: 1.4 }}>
@@ -241,11 +241,11 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
                 <div style={{
                   marginTop: '16px',
                   padding: '10px 12px',
-                  background: 'rgba(16, 185, 129, 0.08)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  background: '#f0fdf4',
+                  border: '1px solid #bbf7d0',
                   borderRadius: '8px',
                   fontSize: '0.78rem',
-                  color: '#10b981',
+                  color: '#15803d',
                   fontWeight: 600,
                   display: 'flex',
                   flexDirection: 'column',

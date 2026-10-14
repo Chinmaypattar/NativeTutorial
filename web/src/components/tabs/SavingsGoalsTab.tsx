@@ -4,9 +4,7 @@ import {
   Plus,
   Calendar,
   PiggyBank,
-  CheckCircle2,
   Sparkles,
-  TrendingUp,
   X,
   AlertCircle,
 } from 'lucide-react';
@@ -69,7 +67,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
       {/* Header & Create Action */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>Savings Buckets & Goals</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>Savings Buckets & Goals</h1>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Earmark funds for future dreams, vacation plans, and contingency reserves
           </p>
@@ -81,7 +79,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
             className="btn-secondary"
             style={{ fontSize: '0.85rem' }}
           >
-            <Sparkles size={16} color="#38bdf8" />
+            <Sparkles size={16} color="#1d4ed8" />
             <span>Create via AI Chat</span>
           </button>
           <button
@@ -104,7 +102,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
               key={b.id}
               className="bank-card"
               style={{
-                background: 'linear-gradient(135deg, #16243b 0%, #0f172a 100%)',
+                background: '#ffffff',
                 border: '1px solid var(--border-subtle)',
                 position: 'relative',
               }}
@@ -115,18 +113,19 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
                     width: '42px',
                     height: '42px',
                     borderRadius: '12px',
-                    background: 'rgba(56, 189, 248, 0.15)',
+                    background: '#eff6ff',
+                    border: '1px solid #bfdbfe',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <PiggyBank size={22} color="#38bdf8" />
+                    <PiggyBank size={22} color="#1d4ed8" />
                   </div>
                   <div>
-                    <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#fff' }}>
+                    <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: 'var(--text-primary)' }}>
                       {b.name}
                     </h3>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
                       <Calendar size={12} />
                       <span>Target: {formatDate(b.target_date)}</span>
                     </div>
@@ -140,17 +139,17 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
               <div style={{ margin: '24px 0 16px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: '8px' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Saved Progress:</span>
-                  <span className="mono" style={{ color: '#fff', fontWeight: 700 }}>
+                  <span className="mono" style={{ color: 'var(--text-primary)', fontWeight: 800 }}>
                     {formatCurrency(b.current_amount)} / {formatCurrency(b.target_amount)}
                   </span>
                 </div>
-                <div style={{ width: '100%', height: '10px', background: 'rgba(255,255,255,0.08)', borderRadius: '5px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
                   <div
                     style={{
                       width: `${percent}%`,
                       height: '100%',
-                      background: 'linear-gradient(90deg, #38bdf8, #2563eb)',
-                      borderRadius: '5px',
+                      background: 'linear-gradient(90deg, #1d4ed8, #0284c7)',
+                      borderRadius: '4px',
                       transition: 'width 0.4s ease',
                     }}
                   />
@@ -159,30 +158,26 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
 
               {/* Monthly Contribution info */}
               <div style={{
-                background: 'rgba(0,0,0,0.25)',
+                background: '#f8fafc',
                 padding: '14px',
                 borderRadius: 'var(--radius-md)',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
+                border: '1px solid var(--border-subtle)',
               }}>
                 <div>
                   <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>Monthly Savings Required</div>
-                  <div className="mono" style={{ fontSize: '1.05rem', fontWeight: 800, color: '#10b981' }}>
+                  <div className="mono" style={{ fontSize: '1.1rem', fontWeight: 800, color: '#059669' }}>
                     {formatCurrency(b.monthly_contribution || 0)} / mo
                   </div>
                 </div>
                 <button
                   onClick={() => alert(`Simulated recurring deposit added for ${b.name}`)}
+                  className="btn-secondary"
                   style={{
-                    background: 'rgba(255,255,255,0.06)',
-                    border: '1px solid var(--border-subtle)',
-                    color: '#fff',
                     padding: '6px 12px',
-                    borderRadius: 'var(--radius-sm)',
                     fontSize: '0.75rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
                   }}
                 >
                   Deposit Funds
@@ -196,27 +191,27 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
       {/* Modal: Create New Bucket */}
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content" style={{ background: '#ffffff', maxWidth: '480px', padding: '32px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Target size={22} color="#38bdf8" />
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fff' }}>Create Savings Bucket</h3>
+                <Target size={22} color="#1d4ed8" />
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)' }}>Create Savings Bucket</h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                style={{ background: '#f1f5f9', border: '1px solid var(--border-subtle)', borderRadius: '6px', padding: '4px', color: 'var(--text-secondary)', cursor: 'pointer' }}
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {errorMsg && (
               <div style={{
-                background: 'rgba(239, 68, 68, 0.15)',
-                border: '1px solid rgba(239, 68, 68, 0.3)',
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
                 padding: '10px 14px',
                 borderRadius: '8px',
-                color: '#f87171',
+                color: '#dc2626',
                 fontSize: '0.82rem',
                 marginBottom: '16px',
                 display: 'flex',
@@ -230,7 +225,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
 
             <form onSubmit={handleCreateBucket} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Goal Name
                 </label>
                 <input
@@ -240,12 +235,12 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
                   onChange={(e) => setName(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
-                    padding: '10px 14px',
-                    color: '#fff',
-                    fontSize: '0.9rem',
+                    padding: '10px 12px',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
                     outline: 'none',
                   }}
                   required
@@ -253,22 +248,22 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Target Amount (₹)
                 </label>
                 <input
                   type="number"
-                  placeholder="e.g. 150000"
+                  placeholder="150000"
                   value={targetAmount}
                   onChange={(e) => setTargetAmount(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
-                    padding: '10px 14px',
-                    color: '#fff',
-                    fontSize: '0.9rem',
+                    padding: '10px 12px',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
                     outline: 'none',
                   }}
                   required
@@ -276,7 +271,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
                   Target Date
                 </label>
                 <input
@@ -285,35 +280,48 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
                   onChange={(e) => setTargetDate(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
-                    padding: '10px 14px',
-                    color: '#fff',
-                    fontSize: '0.9rem',
+                    padding: '10px 12px',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
                     outline: 'none',
                   }}
                   required
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '12px' }}>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  className="btn-secondary"
-                  disabled={submitting}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn-primary"
-                  disabled={submitting}
-                >
-                  {submitting ? 'Creating...' : 'Create Goal'}
-                </button>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                  Monthly Contribution (Optional)
+                </label>
+                <input
+                  type="number"
+                  placeholder="Auto-calculated if left blank"
+                  value={monthlyContribution}
+                  onChange={(e) => setMonthlyContribution(e.target.value)}
+                  style={{
+                    width: '100%',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
+                    borderRadius: '8px',
+                    padding: '10px 12px',
+                    color: 'var(--text-primary)',
+                    fontSize: '0.85rem',
+                    outline: 'none',
+                  }}
+                />
               </div>
+
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={submitting}
+                style={{ width: '100%', justifyContent: 'center', marginTop: '8px', padding: '12px' }}
+              >
+                {submitting ? 'Creating Goal...' : 'Establish Savings Bucket'}
+              </button>
             </form>
           </div>
         </div>

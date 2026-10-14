@@ -5,15 +5,13 @@ import {
   X,
   Bot,
   User,
-  Shield,
   RotateCcw,
   Wrench,
   ChevronDown,
   ChevronRight,
-  AlertTriangle,
   Lock,
 } from 'lucide-react';
-import { ChatMessage, ToolExecutionRecord } from '../types/banking';
+import { ChatMessage } from '../types/banking';
 import { api } from '../api/client';
 
 interface CopilotChatProps {
@@ -28,7 +26,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hello Pranita! I am your AI Banking Copilot powered by Google Gemini and real-time database tools. How can I help you today? You can ask about your account balances, Flipkart/Zomato expenses, affordability for big purchases, or savings goals.",
+        "Hello! I am your AI Banking Copilot powered by Google Gemini and real-time database tools. How can I help you today? You can ask about your account balances, Flipkart/Zomato expenses, affordability for big purchases, or 30-day cashflow forecasts.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -101,20 +99,20 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
     setSessionId(null);
     setMessages([
       {
-        id: 'welcome-reset',
+        id: 'reset',
         role: 'assistant',
-        content: "Conversation session reset. How can I assist with your finances?",
+        content: 'Conversation history reset. How may I assist you with your banking needs?',
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);
   };
 
   const quickPills = [
-    'How much did I spend on Flipkart this year?',
+    'How much did I spend on Flipkart?',
     'What is my total account balance?',
     'Can I afford a new car for ₹8,00,000?',
-    'Show my credit card rewards & due date',
-    'Calculate my financial health score',
+    'Will I run out of money this month?',
+    'Show my food & dining spend',
   ];
 
   if (!isOpen) return null;
@@ -127,12 +125,12 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
       bottom: 0,
       width: '460px',
       maxWidth: '100vw',
-      background: 'var(--bg-secondary)',
+      background: '#ffffff',
       borderLeft: '1px solid var(--border-subtle)',
       display: 'flex',
       flexDirection: 'column',
       zIndex: 200,
-      boxShadow: '-10px 0 35px rgba(0, 0, 0, 0.7)',
+      boxShadow: '-10px 0 35px rgba(15, 23, 42, 0.12)',
       animation: 'fadeIn 0.2s ease-out',
     }}>
       {/* Header */}
@@ -143,24 +141,24 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        background: 'rgba(15, 23, 42, 0.95)',
+        background: '#f8fafc',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{
             width: '38px',
             height: '38px',
             borderRadius: '10px',
-            background: 'linear-gradient(135deg, #2563eb, #38bdf8)',
+            background: 'linear-gradient(135deg, #1d4ed8, #0284c7)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 12px rgba(37, 99, 235, 0.4)',
+            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
           }}>
             <Sparkles size={20} color="#fff" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ fontWeight: 800, fontSize: '0.95rem', color: '#fff' }}>
+              <span style={{ fontWeight: 800, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
                 AI Banking Copilot
               </span>
               <span className="badge badge-success" style={{ fontSize: '0.65rem', padding: '2px 8px' }}>
@@ -178,9 +176,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
             onClick={handleResetSession}
             title="Reset Conversation"
             style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
+              background: '#f1f5f9',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               padding: '6px',
               borderRadius: '6px',
@@ -191,9 +189,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
           <button
             onClick={onClose}
             style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--text-muted)',
+              background: '#f1f5f9',
+              border: '1px solid var(--border-subtle)',
+              color: 'var(--text-secondary)',
               cursor: 'pointer',
               padding: '6px',
               borderRadius: '6px',
@@ -207,26 +205,27 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
       {/* Safety Notice Banner */}
       <div style={{
         padding: '8px 16px',
-        background: 'rgba(30, 41, 59, 0.5)',
-        borderBottom: '1px solid var(--border-subtle)',
+        background: '#ecfdf5',
+        borderBottom: '1px solid #a7f3d0',
         display: 'flex',
         alignItems: 'center',
         gap: '8px',
-        fontSize: '0.7rem',
-        color: 'var(--text-secondary)',
+        fontSize: '0.72rem',
+        color: '#065f46',
       }}>
-        <Lock size={12} color="#10b981" />
+        <Lock size={12} color="#059669" />
         <span>Grounded on database truth • PII masked • PIN/OTP protected</span>
       </div>
 
-      {/* Messages Scroll Area */}
+      {/* Chat Messages */}
       <div style={{
         flex: 1,
         overflowY: 'auto',
         padding: '20px 16px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '18px',
+        gap: '16px',
+        background: '#ffffff',
       }}>
         {messages.map((msg, index) => {
           const isUser = msg.role === 'user';
@@ -245,25 +244,26 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
                 alignItems: 'flex-start',
                 gap: '8px',
                 flexDirection: isUser ? 'row-reverse' : 'row',
-                maxWidth: '90%',
+                maxWidth: '92%',
               }}>
                 <div style={{
                   width: '28px',
                   height: '28px',
                   borderRadius: '50%',
-                  background: isUser ? '#2563eb' : 'rgba(56, 189, 248, 0.2)',
+                  background: isUser ? '#1d4ed8' : '#eff6ff',
+                  border: isUser ? 'none' : '1px solid #bfdbfe',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   flexShrink: 0,
                   marginTop: '2px',
                 }}>
-                  {isUser ? <User size={14} color="#fff" /> : <Bot size={14} color="#38bdf8" />}
+                  {isUser ? <User size={14} color="#fff" /> : <Bot size={14} color="#1d4ed8" />}
                 </div>
 
                 <div style={{
-                  background: isUser ? '#2563eb' : 'var(--bg-card)',
-                  color: isUser ? '#fff' : 'var(--text-primary)',
+                  background: isUser ? '#1d4ed8' : '#f1f5f9',
+                  color: isUser ? '#ffffff' : 'var(--text-primary)',
                   padding: '12px 16px',
                   borderRadius: isUser ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
                   fontSize: '0.875rem',
@@ -278,7 +278,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
 
               {/* Tool Execution Inspector Pill */}
               {msg.tools_executed && msg.tools_executed.length > 0 && (
-                <div style={{ marginLeft: '36px', maxWidth: '85%' }}>
+                <div style={{ marginLeft: '36px', maxWidth: '88%' }}>
                   {msg.tools_executed.map((tool, tIdx) => {
                     const toolKey = `${index}-${tIdx}`;
                     const isExpanded = expandedToolIdx === toolKey;
@@ -286,8 +286,8 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
                       <div
                         key={tIdx}
                         style={{
-                          background: 'rgba(15, 23, 42, 0.8)',
-                          border: '1px solid rgba(59, 130, 246, 0.25)',
+                          background: '#f8fafc',
+                          border: '1px solid #cbd5e1',
                           borderRadius: '8px',
                           padding: '6px 10px',
                           fontSize: '0.72rem',
@@ -299,30 +299,30 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
                           style={{
                             background: 'none',
                             border: 'none',
-                            color: '#38bdf8',
+                            color: '#0284c7',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
                             cursor: 'pointer',
-                            fontWeight: 600,
+                            fontWeight: 700,
                             padding: 0,
                             width: '100%',
                             textAlign: 'left',
                           }}
                         >
-                          <Wrench size={12} color="#38bdf8" />
+                          <Wrench size={12} color="#0284c7" />
                           <span>Tool Executed: {tool.tool_name}()</span>
                           {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                         </button>
 
                         {isExpanded && (
-                          <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px solid var(--border-subtle)' }}>
+                          <div style={{ marginTop: '6px', paddingTop: '6px', borderTop: '1px solid #e2e8f0' }}>
                             <div style={{ color: 'var(--text-muted)' }}>Arguments:</div>
-                            <pre className="mono" style={{ fontSize: '0.68rem', color: '#94a3b8', background: 'rgba(0,0,0,0.3)', padding: '4px 6px', borderRadius: '4px', overflowX: 'auto' }}>
+                            <pre className="mono" style={{ fontSize: '0.68rem', color: '#334155', background: '#ffffff', border: '1px solid #e2e8f0', padding: '4px 6px', borderRadius: '4px', overflowX: 'auto' }}>
                               {JSON.stringify(tool.arguments, null, 2)}
                             </pre>
                             <div style={{ color: 'var(--text-muted)', marginTop: '4px' }}>Result:</div>
-                            <pre className="mono" style={{ fontSize: '0.68rem', color: '#10b981', background: 'rgba(0,0,0,0.3)', padding: '4px 6px', borderRadius: '4px', overflowX: 'auto', maxHeight: '120px' }}>
+                            <pre className="mono" style={{ fontSize: '0.68rem', color: '#059669', background: '#ffffff', border: '1px solid #e2e8f0', padding: '4px 6px', borderRadius: '4px', overflowX: 'auto', maxHeight: '120px' }}>
                               {JSON.stringify(tool.result, null, 2)}
                             </pre>
                           </div>
@@ -347,15 +347,16 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
               width: '28px',
               height: '28px',
               borderRadius: '50%',
-              background: 'rgba(56, 189, 248, 0.2)',
+              background: '#eff6ff',
+              border: '1px solid #bfdbfe',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Bot size={14} color="#38bdf8" />
+              <Bot size={14} color="#1d4ed8" />
             </div>
             <div style={{
-              background: 'var(--bg-card)',
+              background: '#f1f5f9',
               padding: '10px 16px',
               borderRadius: '16px',
               display: 'flex',
@@ -364,9 +365,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
               border: '1px solid var(--border-subtle)',
             }}>
               <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>Copilot is thinking</span>
-              <span style={{ animation: 'bounceDot 1s infinite 0ms', color: '#38bdf8' }}>•</span>
-              <span style={{ animation: 'bounceDot 1s infinite 200ms', color: '#38bdf8' }}>•</span>
-              <span style={{ animation: 'bounceDot 1s infinite 400ms', color: '#38bdf8' }}>•</span>
+              <span style={{ animation: 'bounceDot 1s infinite 0ms', color: '#1d4ed8' }}>•</span>
+              <span style={{ animation: 'bounceDot 1s infinite 200ms', color: '#1d4ed8' }}>•</span>
+              <span style={{ animation: 'bounceDot 1s infinite 400ms', color: '#1d4ed8' }}>•</span>
             </div>
           </div>
         )}
@@ -378,9 +379,9 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
       <div style={{
         padding: '10px 16px',
         borderTop: '1px solid var(--border-subtle)',
-        background: 'rgba(15, 23, 42, 0.6)',
+        background: '#f8fafc',
       }}>
-        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase' }}>
+        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginBottom: '6px', textTransform: 'uppercase', fontWeight: 600 }}>
           Suggested Inquiries
         </div>
         <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
@@ -389,23 +390,27 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
               key={idx}
               onClick={() => handleSend(p)}
               style={{
-                background: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid var(--border-subtle)',
+                background: '#ffffff',
+                border: '1px solid #cbd5e1',
                 borderRadius: '9999px',
-                padding: '4px 10px',
-                fontSize: '0.72rem',
-                color: '#cbd5e1',
+                padding: '5px 12px',
+                fontSize: '0.74rem',
+                color: 'var(--text-primary)',
+                fontWeight: 500,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
+                boxShadow: 'var(--shadow-sm)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(37, 99, 235, 0.2)';
-                e.currentTarget.style.color = '#fff';
+                e.currentTarget.style.background = '#eff6ff';
+                e.currentTarget.style.borderColor = '#93c5fd';
+                e.currentTarget.style.color = '#1d4ed8';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-                e.currentTarget.style.color = '#cbd5e1';
+                e.currentTarget.style.background = '#ffffff';
+                e.currentTarget.style.borderColor = '#cbd5e1';
+                e.currentTarget.style.color = 'var(--text-primary)';
               }}
             >
               {p}
@@ -425,7 +430,7 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
           borderTop: '1px solid var(--border-subtle)',
           display: 'flex',
           gap: '8px',
-          background: 'var(--bg-secondary)',
+          background: '#ffffff',
         }}
       >
         <input
@@ -436,11 +441,11 @@ export const CopilotChat: React.FC<CopilotChatProps> = ({ isOpen, onClose, initi
           disabled={isLoading}
           style={{
             flex: 1,
-            background: 'rgba(255, 255, 255, 0.05)',
-            border: '1px solid var(--border-subtle)',
+            background: '#f8fafc',
+            border: '1px solid #cbd5e1',
             borderRadius: 'var(--radius-md)',
             padding: '10px 14px',
-            color: '#fff',
+            color: 'var(--text-primary)',
             fontSize: '0.85rem',
             outline: 'none',
           }}

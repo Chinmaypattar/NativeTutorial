@@ -37,7 +37,7 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
       {/* Title & Summary */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: '#fff' }}>Deposit Accounts & Balances</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)' }}>Deposit Accounts & Balances</h1>
           <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
             Manage your high-yield savings and operational checking portfolios
           </p>
@@ -45,7 +45,7 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
 
         <div style={{ display: 'flex', gap: '10px' }}>
           <button onClick={onOpenTransfer} className="btn-secondary" style={{ fontSize: '0.82rem' }}>
-            <ArrowRightLeft size={14} color="#38bdf8" />
+            <ArrowRightLeft size={14} color="#1d4ed8" />
             <span>Transfer Funds</span>
           </button>
           <button
@@ -59,18 +59,27 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
       </div>
 
       {/* Grid of Accounts */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
-        {(accounts?.accounts || []).map((acc) => {
-          const isSavings = acc.account_type.toLowerCase().includes('savings');
-          return (
+      {(accounts?.accounts || []).length === 0 ? (
+        <div className="bank-card" style={{ textAlign: 'center', padding: '48px 24px', background: '#ffffff' }}>
+          <Building2 size={40} color="#94a3b8" style={{ margin: '0 auto 12px' }} />
+          <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)' }}>No Active Accounts Displayed</h3>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', maxWidth: '420px', margin: '8px auto 0' }}>
+            Please sign in to view your savings and checking balances, or register for a new Apex Digital Account.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
+          {(accounts?.accounts || []).map((acc) => {
+            const isSavings = acc.account_type.toLowerCase().includes('savings');
+            return (
             <div
               key={acc.id}
               className="bank-card"
               style={{
                 background: isSavings
-                  ? 'linear-gradient(135deg, #0d2847 0%, #0f172a 100%)'
-                  : 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
-                border: isSavings ? '1px solid rgba(56, 189, 248, 0.3)' : '1px solid var(--border-subtle)',
+                  ? 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)'
+                  : '#ffffff',
+                border: isSavings ? '1px solid #bbf7d0' : '1px solid var(--border-subtle)',
                 position: 'relative',
                 overflow: 'hidden',
               }}
@@ -81,19 +90,20 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
                     width: '46px',
                     height: '46px',
                     borderRadius: '12px',
-                    background: isSavings ? 'rgba(56, 189, 248, 0.15)' : 'rgba(255, 255, 255, 0.08)',
+                    background: isSavings ? '#ecfdf5' : '#eff6ff',
+                    border: isSavings ? '1px solid #a7f3d0' : '1px solid #bfdbfe',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <Building2 size={24} color={isSavings ? '#38bdf8' : '#94a3b8'} />
+                    <Building2 size={24} color={isSavings ? '#059669' : '#1d4ed8'} />
                   </div>
                   <div>
-                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#fff', textTransform: 'capitalize' }}>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'capitalize' }}>
                       Apex Premier {acc.account_type}
                     </h2>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '2px' }}>
-                      <span className="mono" style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      <span className="mono" style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
                         {maskAccountNumber(acc.account_number)}
                       </span>
                       <button
@@ -101,7 +111,7 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
                         title="Copy Account Number"
                         style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}
                       >
-                        {copiedId === acc.id ? <Check size={14} color="#10b981" /> : <Copy size={14} />}
+                        {copiedId === acc.id ? <Check size={14} color="#059669" /> : <Copy size={14} />}
                       </button>
                     </div>
                   </div>
@@ -117,36 +127,37 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
                 <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Total Available Balance
                 </div>
-                <div style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', marginTop: '4px' }} className="mono">
+                <div style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }} className="mono">
                   {formatCurrency(acc.balance)}
                 </div>
               </div>
 
               {/* Details table */}
               <div style={{
-                background: 'rgba(0, 0, 0, 0.25)',
+                background: '#f8fafc',
                 borderRadius: 'var(--radius-md)',
                 padding: '16px',
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: '12px',
                 fontSize: '0.8rem',
+                border: '1px solid var(--border-subtle)',
               }}>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>IFSC Code:</span>
-                  <div style={{ color: '#fff', fontWeight: 600 }} className="mono">APEX0001042</div>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 700 }} className="mono">APEX0001042</div>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Interest Rate:</span>
-                  <div style={{ color: '#10b981', fontWeight: 600 }}>{isSavings ? '4.00% p.a.' : 'Nil (Checking)'}</div>
+                  <div style={{ color: '#059669', fontWeight: 700 }}>{isSavings ? '4.00% p.a.' : 'Nil (Checking)'}</div>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Branch:</span>
-                  <div style={{ color: '#fff' }}>Bandra Kurla Complex, Mumbai</div>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Bandra Kurla Complex, Mumbai</div>
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)' }}>Nominee:</span>
-                  <div style={{ color: '#fff' }}>Registered (Rahul S.)</div>
+                  <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>Registered (Rahul S.)</div>
                 </div>
               </div>
 
@@ -173,23 +184,24 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
           );
         })}
       </div>
+      )}
 
       {/* Security Banner */}
       <div style={{
-        background: 'rgba(16, 185, 129, 0.08)',
-        border: '1px solid rgba(16, 185, 129, 0.2)',
+        background: '#ecfdf5',
+        border: '1px solid #a7f3d0',
         borderRadius: 'var(--radius-lg)',
         padding: '20px 24px',
         display: 'flex',
         alignItems: 'center',
         gap: '16px',
       }}>
-        <Shield size={28} color="#10b981" />
+        <Shield size={28} color="#059669" />
         <div>
-          <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#fff' }}>
+          <h4 style={{ fontSize: '0.95rem', fontWeight: 800, color: '#065f46' }}>
             Deposit Insurance & Credit Guarantee Corporation (DICGC) Insured
           </h4>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '2px' }}>
+          <p style={{ fontSize: '0.8rem', color: '#047857', marginTop: '2px' }}>
             All customer deposits up to ₹5,00,000 across savings, current, and fixed deposits are fully insured under Reserve Bank of India statutory safety standards.
           </p>
         </div>

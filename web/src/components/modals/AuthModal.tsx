@@ -8,7 +8,6 @@ import {
   Eye,
   EyeOff,
   Sparkles,
-  CheckCircle2,
   AlertCircle,
   ArrowRight,
   Building2,
@@ -90,23 +89,23 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content" style={{ maxWidth: '480px', padding: '36px' }}>
+      <div className="modal-content" style={{ maxWidth: '480px', padding: '36px', background: '#ffffff' }}>
         {/* Bank Logo & Title */}
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div style={{
             width: '52px',
             height: '52px',
             borderRadius: '14px',
-            background: 'linear-gradient(135deg, #2563eb, #1e3a8a)',
+            background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(37, 99, 235, 0.4)',
+            boxShadow: '0 4px 14px rgba(37, 99, 235, 0.3)',
             marginBottom: '12px',
           }}>
             <Shield size={28} color="#ffffff" />
           </div>
-          <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#fff', letterSpacing: '-0.02em' }}>
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             APEX DIGITAL BANK
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
@@ -117,7 +116,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
         {/* Mode Switch Tabs */}
         <div style={{
           display: 'flex',
-          background: 'rgba(255, 255, 255, 0.04)',
+          background: '#f1f5f9',
           borderRadius: 'var(--radius-md)',
           padding: '4px',
           marginBottom: '20px',
@@ -134,8 +133,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
               padding: '8px',
               border: 'none',
               borderRadius: 'var(--radius-sm)',
-              background: mode === 'login' ? '#2563eb' : 'transparent',
-              color: mode === 'login' ? '#fff' : 'var(--text-secondary)',
+              background: mode === 'login' ? '#1d4ed8' : 'transparent',
+              color: mode === 'login' ? '#ffffff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '0.85rem',
               cursor: 'pointer',
@@ -155,8 +154,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
               padding: '8px',
               border: 'none',
               borderRadius: 'var(--radius-sm)',
-              background: mode === 'register' ? '#2563eb' : 'transparent',
-              color: mode === 'register' ? '#fff' : 'var(--text-secondary)',
+              background: mode === 'register' ? '#1d4ed8' : 'transparent',
+              color: mode === 'register' ? '#ffffff' : 'var(--text-secondary)',
               fontWeight: 600,
               fontSize: '0.85rem',
               cursor: 'pointer',
@@ -169,11 +168,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
 
         {errorMessage && (
           <div style={{
-            background: 'rgba(239, 68, 68, 0.15)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
             padding: '10px 14px',
             borderRadius: '8px',
-            color: '#f87171',
+            color: '#dc2626',
             fontSize: '0.82rem',
             marginBottom: '16px',
             display: 'flex',
@@ -201,11 +200,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
                   placeholder="name@apexbank.com"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '10px 12px 10px 38px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.875rem',
                     outline: 'none',
                   }}
@@ -219,7 +218,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
                 <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
                   Password
                 </label>
-                <span style={{ fontSize: '0.72rem', color: '#38bdf8', cursor: 'pointer' }} onClick={() => fillDemo('pranita@apexbank.com')}>
+                <span style={{ fontSize: '0.72rem', color: '#1d4ed8', cursor: 'pointer', fontWeight: 600 }} onClick={() => fillDemo('pranita@apexbank.com')}>
                   Use Demo Password
                 </span>
               </div>
@@ -232,11 +231,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
                   placeholder="••••••••"
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '10px 38px 10px 38px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.875rem',
                     outline: 'none',
                   }}
@@ -260,92 +259,84 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
               </div>
             </div>
 
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={submitting}
-              style={{ width: '100%', justifyContent: 'center', padding: '12px', marginTop: '6px' }}
-            >
-              <span>{submitting ? 'Verifying...' : 'Sign In to NetBanking'}</span>
-              <ArrowRight size={16} />
-            </button>
-
-            {/* Quick Demo Fill Pill */}
+            {/* 1-Click Demo Fill Assistant */}
             <div style={{
-              marginTop: '12px',
-              padding: '12px',
-              background: 'rgba(37, 99, 235, 0.1)',
-              border: '1px solid rgba(59, 130, 246, 0.25)',
+              background: '#f0f9ff',
+              border: '1px solid #bae6fd',
               borderRadius: '8px',
+              padding: '12px 14px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              marginTop: '4px',
             }}>
               <div>
-                <div style={{ fontSize: '0.78rem', color: '#fff', fontWeight: 600 }}>Demo Account: Pranita Sharma</div>
-                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>pranita@apexbank.com</div>
+                <div style={{ fontSize: '0.8rem', color: '#0369a1', fontWeight: 700 }}>Demo Account: Pranita Sharma</div>
+                <div style={{ fontSize: '0.72rem', color: '#0284c7' }}>Pre-seeded with Flipkart spend, loan & buckets</div>
               </div>
               <button
                 type="button"
                 onClick={() => fillDemo('pranita@apexbank.com')}
-                style={{
-                  background: '#2563eb',
-                  border: 'none',
-                  color: '#fff',
-                  borderRadius: '4px',
-                  padding: '4px 10px',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
+                className="btn-secondary"
+                style={{ padding: '5px 10px', fontSize: '0.75rem', background: '#ffffff' }}
               >
-                Auto Fill
+                <Sparkles size={12} color="#0284c7" />
+                <span>Auto-Fill</span>
               </button>
             </div>
+
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={submitting}
+              style={{ width: '100%', justifyContent: 'center', marginTop: '10px', padding: '12px' }}
+            >
+              {submitting ? 'Authenticating...' : 'Sign In to NetBanking'}
+              <ArrowRight size={16} />
+            </button>
           </form>
         ) : (
           /* Register Form */
           <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                   First Name
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Rohan"
+                  placeholder="Rahul"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.85rem',
                     outline: 'none',
                   }}
                   required
                 />
               </div>
-
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                   Last Name
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Verma"
+                  placeholder="Verma"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.85rem',
                     outline: 'none',
                   }}
@@ -355,21 +346,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+              <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                 Email Address
               </label>
               <input
                 type="email"
-                placeholder="rohan@example.com"
+                placeholder="rahul.verma@example.com"
                 value={regEmail}
                 onChange={(e) => setRegEmail(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '8px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
@@ -379,29 +370,28 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                   Mobile Phone
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   placeholder="+91 98765 43210"
                   value={regPhone}
                   onChange={(e) => setRegPhone(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.85rem',
                     outline: 'none',
                   }}
                 />
               </div>
-
               <div>
-                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
                   Monthly Income (₹)
                 </label>
                 <input
@@ -411,34 +401,35 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
                   onChange={(e) => setRegIncome(e.target.value)}
                   style={{
                     width: '100%',
-                    background: 'rgba(255,255,255,0.05)',
-                    border: '1px solid var(--border-subtle)',
+                    background: '#ffffff',
+                    border: '1px solid var(--border-strong)',
                     borderRadius: '8px',
                     padding: '8px 12px',
-                    color: '#fff',
+                    color: 'var(--text-primary)',
                     fontSize: '0.85rem',
                     outline: 'none',
                   }}
+                  required
                 />
               </div>
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                Set NetBanking Password
+              <label style={{ display: 'block', fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                Create Password
               </label>
               <input
                 type="password"
-                placeholder="Choose strong password"
+                placeholder="••••••••"
                 value={regPassword}
                 onChange={(e) => setRegPassword(e.target.value)}
                 style={{
                   width: '100%',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid var(--border-subtle)',
+                  background: '#ffffff',
+                  border: '1px solid var(--border-strong)',
                   borderRadius: '8px',
                   padding: '8px 12px',
-                  color: '#fff',
+                  color: 'var(--text-primary)',
                   fontSize: '0.85rem',
                   outline: 'none',
                 }}
@@ -447,30 +438,38 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onSuccess, onClose
             </div>
 
             <div style={{
-              padding: '10px 12px',
-              background: 'rgba(16, 185, 129, 0.08)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
+              background: '#ecfdf5',
+              border: '1px solid #a7f3d0',
               borderRadius: '8px',
-              fontSize: '0.72rem',
-              color: '#10b981',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
+              padding: '10px 12px',
+              fontSize: '0.75rem',
+              color: '#065f46',
             }}>
-              <CheckCircle2 size={14} />
-              <span>Includes pre-configured Savings Account (₹1,00,000 credit) & Visa Card!</span>
+              ✨ <strong>Auto-Provisioned Package:</strong> Includes ₹1,00,000 Savings Deposit, ₹25,000 Checking Account, and a Platinum Credit Card.
             </div>
 
             <button
               type="submit"
               className="btn-primary"
               disabled={submitting}
-              style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
+              style={{ width: '100%', justifyContent: 'center', marginTop: '8px', padding: '12px' }}
             >
-              <span>{submitting ? 'Creating Account...' : 'Open Account Now'}</span>
-              <ArrowRight size={16} />
+              {submitting ? 'Creating Account...' : 'Open Banking Account'}
+              <Building2 size={16} />
             </button>
           </form>
+        )}
+
+        {onClose && (
+          <div style={{ textAlign: 'center', marginTop: '16px' }}>
+            <button
+              type="button"
+              onClick={onClose}
+              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '0.8rem', cursor: 'pointer' }}
+            >
+              Cancel & Continue as Guest
+            </button>
+          </div>
         )}
       </div>
     </div>
