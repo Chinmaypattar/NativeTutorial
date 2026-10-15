@@ -17,7 +17,7 @@ interface HeaderProps {
   copilotOpen: boolean;
   onOpenTransfer: () => void;
   onOpenBillPay: () => void;
-  onOpenAuth: () => void;
+  onOpenAuth?: () => void;
   onLogout: () => void;
 }
 

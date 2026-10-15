@@ -12,7 +12,7 @@ import { WellnessTab } from './components/tabs/WellnessTab';
 import { CopilotChat } from './components/CopilotChat';
 
 // Banking Operations Modals
-import { AuthModal } from './components/modals/AuthModal';
+import { LoginPortal } from './components/auth/LoginPortal';
 import { TransferModal } from './components/modals/TransferModal';
 import { BillPayModal } from './components/modals/BillPayModal';
 import { StatementModal } from './components/modals/StatementModal';
@@ -54,7 +54,6 @@ export const App: React.FC = () => {
   const [forecast, setForecast] = useState<CashflowForecastResponse | null>(null);
 
   // Modal Dialog States
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isTransferOpen, setIsTransferOpen] = useState(false);
   const [isBillPayOpen, setIsBillPayOpen] = useState(false);
   const [statementAccount, setStatementAccount] = useState<Account | null>(null);
@@ -62,9 +61,35 @@ export const App: React.FC = () => {
   const loadBankingData = async () => {
     setLoading(true);
     setError(null);
+
+    const token = api.getToken();
+    if (!token) {
+      setCustomer(null);
+      setAccounts(null);
+      setTransactions([]);
+      setCards([]);
+      setLoans([]);
+      setInvestments([]);
+      setBuckets([]);
+      setWellness(null);
+      setOffers([]);
+      setForecast(null);
+      setLoading(false);
+      return;
+    }
+
     try {
+      const custData = await api.getCustomerProfile();
+      if (!custData) {
+        api.setToken(null);
+        setCustomer(null);
+        setLoading(false);
+        return;
+      }
+
+      setCustomer(custData);
+
       const [
-        custData,
         accData,
         txData,
         cardData,
@@ -75,7 +100,6 @@ export const App: React.FC = () => {
         offerData,
         fcData,
       ] = await Promise.all([
-        api.getCustomerProfile().catch(() => null),
         api.getAccountsSummary().catch(() => null),
         api.getTransactions({ limit: 50 }).catch(() => []),
         api.getCreditCards().catch(() => []),
@@ -87,7 +111,6 @@ export const App: React.FC = () => {
         api.getCashflowForecast(30).catch(() => null),
       ]);
 
-      setCustomer(custData);
       setAccounts(accData);
       setTransactions(txData);
       setCards(cardData);
@@ -98,8 +121,9 @@ export const App: React.FC = () => {
       setOffers(offerData);
       setForecast(fcData);
     } catch (err: any) {
-      console.error('Failed to load initial banking data:', err);
-      setError('Unable to reach Banking Copilot API. Ensure backend is running at http://localhost:8000.');
+      console.error('Failed to load banking data:', err);
+      api.setToken(null);
+      setCustomer(null);
     } finally {
       setLoading(false);
     }
@@ -116,7 +140,6 @@ export const App: React.FC = () => {
 
   const handleOpenTransfer = () => {
     if (!customer) {
-      setIsAuthOpen(true);
       return;
     }
     setIsTransferOpen(true);
@@ -124,7 +147,6 @@ export const App: React.FC = () => {
 
   const handleOpenBillPay = () => {
     if (!customer) {
-      setIsAuthOpen(true);
       return;
     }
     setIsBillPayOpen(true);
@@ -142,8 +164,57 @@ export const App: React.FC = () => {
     setWellness(null);
     setOffers([]);
     setForecast(null);
-    loadBankingData();
   };
+
+  // If loading without an active user, show initialization spinner
+  if (loading && !customer) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '16px',
+        background: '#f8fafc',
+      }}>
+        <div style={{
+          width: '42px',
+          height: '42px',
+          border: '3px solid rgba(29, 78, 216, 0.15)',
+          borderTopColor: '#1d4ed8',
+          borderRadius: '50%',
+          animation: 'bounceDot 1s infinite',
+        }} />
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontWeight: 600 }}>
+          Connecting to Apex NetBanking Gateway...
+        </p>
+      </div>
+    );
+  }
+
+  // If user is not authenticated, render the Secure Login & Registration Portal by default
+  if (!customer) {
+    return (
+      <>
+        <LoginPortal
+          onLoginSuccess={(loggedUser) => {
+            setCustomer(loggedUser);
+            loadBankingData();
+          }}
+          onOpenCopilot={() => setIsCopilotOpen(true)}
+        />
+        <CopilotChat
+          isOpen={isCopilotOpen}
+          onClose={() => {
+            setIsCopilotOpen(false);
+            setCopilotQuery(undefined);
+          }}
+          initialQuery={copilotQuery}
+        />
+      </>
+    );
+  }
 
   return (
     <div className="app-container">
@@ -164,7 +235,6 @@ export const App: React.FC = () => {
           copilotOpen={isCopilotOpen}
           onOpenTransfer={handleOpenTransfer}
           onOpenBillPay={handleOpenBillPay}
-          onOpenAuth={() => setIsAuthOpen(true)}
           onLogout={handleLogout}
         />
 
@@ -193,57 +263,6 @@ export const App: React.FC = () => {
               <RefreshCw size={14} />
               <span>Retry</span>
             </button>
-          </div>
-        )}
-
-        {!customer && !loading && (
-          <div style={{
-            margin: '20px 36px 0',
-            padding: '16px 22px',
-            background: 'linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%)',
-            border: '1px solid #bfdbfe',
-            borderRadius: 'var(--radius-lg)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '16px',
-            boxShadow: '0 2px 8px rgba(37, 99, 235, 0.06)',
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                borderRadius: '10px',
-                background: '#1d4ed8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#ffffff',
-                boxShadow: '0 4px 10px rgba(29, 78, 216, 0.25)',
-                flexShrink: 0,
-              }}>
-                <Sparkles size={20} />
-              </div>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: '0.95rem', color: '#1e3a8a' }}>
-                  Guest Demo Session Active
-                </div>
-                <div style={{ fontSize: '0.8rem', color: '#475569', marginTop: '2px' }}>
-                  You are currently logged out. Sign in or register to access fund transfers, bill pay, official statements, and your personal AI financial advisor.
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={() => setIsAuthOpen(true)}
-                className="btn-primary"
-                style={{ padding: '8px 18px', fontSize: '0.82rem' }}
-              >
-                <span>Sign In / Register</span>
-              </button>
-            </div>
           </div>
         )}
 
@@ -388,16 +407,7 @@ export const App: React.FC = () => {
         initialQuery={copilotQuery}
       />
 
-      {/* Modals for Authentication, Transfer, Bill Pay, and Account Statements */}
-      <AuthModal
-        isOpen={isAuthOpen}
-        onSuccess={(cust) => {
-          setCustomer(cust);
-          setIsAuthOpen(false);
-          loadBankingData();
-        }}
-        onClose={() => setIsAuthOpen(false)}
-      />
+      {/* Modals for Transfer, Bill Pay, and Account Statements */}
 
       <TransferModal
         isOpen={isTransferOpen}
