@@ -68,7 +68,7 @@ export const AccountsTab: React.FC<AccountsTabProps> = ({
           </p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '24px' }}>
+        <div className="grid-cards-responsive">
           {(accounts?.accounts || []).map((acc) => {
             const isSavings = acc.account_type.toLowerCase().includes('savings');
             return (

@@ -94,7 +94,7 @@ export const SavingsGoalsTab: React.FC<SavingsGoalsTabProps> = ({
       </div>
 
       {/* Buckets Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '24px' }}>
+      <div className="grid-cards-responsive">
         {buckets.map((b) => {
           const percent = Math.min(100, Math.round((b.current_amount / b.target_amount) * 100));
           return (

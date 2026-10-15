@@ -37,6 +37,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('overview');
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [copilotQuery, setCopilotQuery] = useState<string | undefined>(undefined);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Core Data State
   const [loading, setLoading] = useState(true);
@@ -223,8 +224,13 @@ export const App: React.FC = () => {
         activeTab={activeTab}
         onSelectTab={(tab) => {
           setActiveTab(tab);
+          setIsMobileMenuOpen(false);
         }}
         onOpenCopilot={() => setIsCopilotOpen(true)}
+        isMobileOpen={isMobileMenuOpen}
+        onCloseMobile={() => setIsMobileMenuOpen(false)}
+        onOpenTransfer={handleOpenTransfer}
+        onOpenBillPay={handleOpenBillPay}
       />
 
       {/* Main Content Area */}
@@ -236,6 +242,7 @@ export const App: React.FC = () => {
           onOpenTransfer={handleOpenTransfer}
           onOpenBillPay={handleOpenBillPay}
           onLogout={handleLogout}
+          onToggleMobileMenu={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
 
         {error && (
@@ -364,6 +371,7 @@ export const App: React.FC = () => {
       {!isCopilotOpen && (
         <button
           onClick={() => setIsCopilotOpen(true)}
+          className="floating-copilot-btn"
           style={{
             position: 'fixed',
             bottom: '28px',

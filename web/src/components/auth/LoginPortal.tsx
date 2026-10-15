@@ -104,16 +104,19 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess, onOpen
       flexDirection: 'column',
     }}>
       {/* Top Bank Navigation Bar */}
-      <header style={{
-        height: '74px',
-        background: '#ffffff',
-        borderBottom: '1px solid var(--border-subtle)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 36px',
-        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-      }}>
+      <header
+        className="header-container"
+        style={{
+          height: '74px',
+          background: '#ffffff',
+          borderBottom: '1px solid var(--border-subtle)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 36px',
+          boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+        }}
+      >
         {/* Brand */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div style={{
@@ -125,6 +128,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess, onOpen
             alignItems: 'center',
             justifyContent: 'center',
             boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+            flexShrink: 0,
           }}>
             <Shield size={24} color="#ffffff" />
           </div>
@@ -137,7 +141,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess, onOpen
                 Digital Bank
               </span>
             </div>
-            <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+            <div className="header-subtitle" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
               Reserve Bank of India Regulated NetBanking Gateway
             </div>
           </div>
@@ -145,35 +149,37 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess, onOpen
 
         {/* Security & Copilot Trigger */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: '#ecfdf5',
-            border: '1px solid #a7f3d0',
-            padding: '6px 14px',
-            borderRadius: '9999px',
-            fontSize: '0.78rem',
-            color: '#065f46',
-            fontWeight: 600,
-          }}>
-            <Shield size={14} color="#059669" />
-            <span>256-bit SSL Banking Protection</span>
-          </div>
+          <div className="portal-header-badges" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: '#ecfdf5',
+              border: '1px solid #a7f3d0',
+              padding: '6px 14px',
+              borderRadius: '9999px',
+              fontSize: '0.78rem',
+              color: '#065f46',
+              fontWeight: 600,
+            }}>
+              <Shield size={14} color="#059669" />
+              <span>256-bit SSL Banking Protection</span>
+            </div>
 
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'var(--bg-muted)',
-            border: '1px solid var(--border-subtle)',
-            padding: '6px 12px',
-            borderRadius: '9999px',
-            fontSize: '0.78rem',
-          }}>
-            <Radio size={14} color="#059669" />
-            <span style={{ color: 'var(--text-secondary)' }}>AI Engine:</span>
-            <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Gemini 3.8 Flash</span>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'var(--bg-muted)',
+              border: '1px solid var(--border-subtle)',
+              padding: '6px 12px',
+              borderRadius: '9999px',
+              fontSize: '0.78rem',
+            }}>
+              <Radio size={14} color="#059669" />
+              <span style={{ color: 'var(--text-secondary)' }}>AI Engine:</span>
+              <span style={{ color: '#1d4ed8', fontWeight: 700 }}>Gemini 3.8 Flash</span>
+            </div>
           </div>
 
           <button
@@ -188,17 +194,16 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onLoginSuccess, onOpen
       </header>
 
       {/* Main Content Area */}
-      <div style={{
-        flex: 1,
-        maxWidth: '1240px',
-        width: '100%',
-        margin: '0 auto',
-        padding: '48px 32px',
-        display: 'grid',
-        gridTemplateColumns: '1.15fr 0.85fr',
-        gap: '48px',
-        alignItems: 'center',
-      }}>
+      <div
+        className="login-portal-grid portal-container"
+        style={{
+          flex: 1,
+          maxWidth: '1240px',
+          width: '100%',
+          margin: '0 auto',
+          padding: '48px 32px',
+        }}
+      >
         {/* Left Column: Bank Hero & Feature Pillars */}
         <div>
           <div style={{

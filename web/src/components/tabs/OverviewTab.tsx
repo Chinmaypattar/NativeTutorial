@@ -48,7 +48,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       <div style={{
         background: 'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%)',
         borderRadius: 'var(--radius-xl)',
-        padding: '32px 36px',
+        padding: 'clamp(20px, 4vw, 36px)',
         border: '1px solid rgba(59, 130, 246, 0.3)',
         position: 'relative',
         overflow: 'hidden',
@@ -70,13 +70,13 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
             <div style={{ fontSize: '0.85rem', color: '#bfdbfe', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Welcome to Apex Digital NetBanking
             </div>
-            <h1 style={{ fontSize: '1.9rem', fontWeight: 800, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 'clamp(1.3rem, 4vw, 1.9rem)', fontWeight: 800, color: '#ffffff', marginTop: '4px', letterSpacing: '-0.02em' }}>
               Total Liquid Portfolio Balance
             </h1>
-            <div style={{ fontSize: '2.8rem', fontWeight: 800, color: '#ffffff', marginTop: '8px' }} className="mono">
+            <div style={{ fontSize: 'clamp(1.8rem, 6vw, 2.8rem)', fontWeight: 800, color: '#ffffff', marginTop: '8px' }} className="mono">
               {formatCurrency(accounts?.total_balance || 245680.50)}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginTop: '12px', flexWrap: 'wrap' }}>
               <span className="badge badge-success" style={{ background: '#ecfdf5', color: '#047857', border: '1px solid #a7f3d0' }}>
                 <ShieldCheck size={14} /> Active & Insured (DICGC)
               </span>
@@ -143,7 +143,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       </div>
 
       {/* Account Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+      <div className="grid-cards-responsive">
         {(accounts?.accounts || []).map((acc) => (
           <div key={acc.id} className="bank-card">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -274,7 +274,7 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
       </div>
 
       {/* Two Column Section: Recent Transactions & Financial Wellness */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '24px' }}>
+      <div className="grid-2col-responsive">
         {/* Recent Transactions Ledger */}
         <div className="bank-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>

@@ -336,11 +336,13 @@ export const PredictiveTab: React.FC<PredictiveTabProps> = ({
         <div style={{
           maxHeight: '280px',
           overflowY: 'auto',
+          overflowX: 'auto',
+          WebkitOverflowScrolling: 'touch',
           border: '1px solid var(--border-strong)',
           borderRadius: 'var(--radius-md)',
           background: '#ffffff',
         }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
+          <table style={{ width: '100%', minWidth: '600px', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
             <thead>
               <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-strong)' }}>
                 <th style={{ padding: '12px 16px', color: 'var(--text-secondary)', textAlign: 'left', fontWeight: 700 }}>Date</th>

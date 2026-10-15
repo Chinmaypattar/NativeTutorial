@@ -43,7 +43,7 @@ export const CardsAndLoansTab: React.FC<CardsAndLoansTabProps> = ({ cards, loans
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+        <div className="grid-cards-responsive">
           {cards.map((card) => {
             const utilRatio = (card.current_balance / card.credit_limit) * 100;
             return (
@@ -179,7 +179,7 @@ export const CardsAndLoansTab: React.FC<CardsAndLoansTabProps> = ({ cards, loans
           </button>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '24px' }}>
+        <div className="grid-cards-responsive">
           {loans.map((loan) => {
             const paid = loan.principal_amount - loan.remaining_balance;
             const progress = Math.round((paid / loan.principal_amount) * 100);

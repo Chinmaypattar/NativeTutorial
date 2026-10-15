@@ -120,7 +120,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
       </div>
 
       {/* 5 Pillars Breakdown & AI Recommendations */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
+      <div className="grid-2col-responsive">
         {/* 5 Pillars List */}
         <div className="bank-card">
           <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
@@ -218,7 +218,7 @@ export const WellnessTab: React.FC<WellnessTabProps> = ({ wellness, offers, onAs
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px' }}>
+        <div className="grid-cards-responsive">
           {offers.map((offer) => (
             <div key={offer.id} className="bank-card" style={{ background: '#ffffff', border: '1px solid var(--border-subtle)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>

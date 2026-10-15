@@ -8,6 +8,7 @@ import {
   LogIn,
   ArrowRightLeft,
   Receipt,
+  Menu,
 } from 'lucide-react';
 import { Customer } from '../types/banking';
 
@@ -19,6 +20,7 @@ interface HeaderProps {
   onOpenBillPay: () => void;
   onOpenAuth?: () => void;
   onLogout: () => void;
+  onToggleMobileMenu?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -29,32 +31,57 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBillPay,
   onOpenAuth,
   onLogout,
+  onToggleMobileMenu,
 }) => {
   return (
-    <header style={{
-      height: '72px',
-      borderBottom: '1px solid var(--border-subtle)',
-      background: '#ffffff',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 32px',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
-    }}>
+    <header
+      className="header-container"
+      style={{
+        height: '72px',
+        borderBottom: '1px solid var(--border-subtle)',
+        background: '#ffffff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 32px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
+      }}
+    >
       {/* Brand & Bank Title */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {onToggleMobileMenu && (
+          <button
+            onClick={onToggleMobileMenu}
+            className="header-mobile-toggle"
+            aria-label="Toggle navigation menu"
+            style={{
+              background: '#f1f5f9',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: '8px',
+              padding: '8px',
+              cursor: 'pointer',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--text-primary)',
+            }}
+          >
+            <Menu size={20} />
+          </button>
+        )}
+
         <div style={{
-          width: '42px',
-          height: '42px',
+          width: '40px',
+          height: '40px',
           borderRadius: '12px',
           background: 'linear-gradient(135deg, #1d4ed8, #2563eb)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           boxShadow: '0 4px 12px rgba(37, 99, 235, 0.3)',
+          flexShrink: 0,
         }}>
           <Shield size={22} color="#ffffff" />
         </div>
@@ -67,14 +94,14 @@ export const Header: React.FC<HeaderProps> = ({
               Digital Bank
             </span>
           </div>
-          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+          <div className="header-subtitle" style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
             NetBanking & AI Conversational Copilot
           </div>
         </div>
       </div>
 
       {/* Center Quick Action Buttons */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="header-center-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <button
           onClick={onOpenTransfer}
           className="btn-secondary"
@@ -139,7 +166,7 @@ export const Header: React.FC<HeaderProps> = ({
 
         {customer ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ textAlign: 'right' }}>
+            <div className="header-user-info" style={{ textAlign: 'right' }}>
               <div style={{ fontWeight: 700, fontSize: '0.875rem', color: 'var(--text-primary)' }}>
                 {customer.full_name || `${customer.first_name} ${customer.last_name}`}
               </div>

@@ -41,7 +41,7 @@ export const InvestmentsTab: React.FC<InvestmentsTabProps> = ({ investments, onA
       </div>
 
       {/* Highlights Bar */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '20px' }}>
+      <div className="grid-cards-responsive">
         <div className="bank-card">
           <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Total Portfolio Valuation</div>
           <div className="mono" style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '4px' }}>
@@ -80,7 +80,8 @@ export const InvestmentsTab: React.FC<InvestmentsTabProps> = ({ investments, onA
           <h2 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>Asset Holdings Breakdown</h2>
         </div>
 
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+        <div className="table-responsive-wrapper">
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '600px' }}>
           <thead>
             <tr style={{ background: 'var(--bg-muted)', borderBottom: '1px solid var(--border-subtle)' }}>
               <th style={{ padding: '14px 20px', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
@@ -147,6 +148,7 @@ export const InvestmentsTab: React.FC<InvestmentsTabProps> = ({ investments, onA
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

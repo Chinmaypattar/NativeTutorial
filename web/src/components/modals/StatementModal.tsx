@@ -118,7 +118,8 @@ export const StatementModal: React.FC<StatementModalProps> = ({
           </div>
 
           {/* Statement Table */}
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.78rem', marginTop: '16px' }}>
+          <div className="table-responsive-wrapper">
+            <table style={{ width: '100%', minWidth: '540px', borderCollapse: 'collapse', fontSize: '0.78rem', marginTop: '16px' }}>
             <thead>
               <tr style={{ background: '#f8fafc', borderBottom: '1px solid var(--border-strong)' }}>
                 <th style={{ padding: '10px 12px', textAlign: 'left', color: 'var(--text-secondary)', fontWeight: 700 }}>Date</th>
@@ -153,6 +154,7 @@ export const StatementModal: React.FC<StatementModalProps> = ({
               })}
             </tbody>
           </table>
+          </div>
 
           {/* Footer certification */}
           <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.72rem', color: 'var(--text-muted)' }}>
